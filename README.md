@@ -56,13 +56,13 @@ src/
 
 The project includes custom exceptions to handle different error scenarios:
 
-### InvalidAmountException
+### ```InvalidAmountException```
 Thrown when a negative or zero amount is used.
 
-### InsufficientAmountException
+### ```InsufficientAmountException```
 Thrown when balance is not enough to complete withdrawal.
 
-### InvalidAccountException
+### ```InvalidAccountException```
 Thrown when an invalid or null account is used.
 
 ---
