@@ -4,6 +4,8 @@ import com.omar.bank.exception.InsufficientAmountException;
 import com.omar.bank.exception.InvalidAccountException;
 import com.omar.bank.exception.InvalidAmountException;
 
+import java.util.UUID;
+
 abstract public class Account {
     private static final int ACCOUNT_NUMBER_LENGTH = 16;
     protected static final double WITHDRAW_FEE_PERCENT =0.01 ;

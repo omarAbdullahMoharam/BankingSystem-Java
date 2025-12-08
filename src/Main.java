@@ -2,6 +2,7 @@ import com.omar.bank.exception.InvalidAmountException;
 import com.omar.bank.model.CurrentAccount;
 import com.omar.bank.model.Customer;
 import com.omar.bank.model.SavingsAccount;
+import com.omar.bank.util.IdGenerator;
 
 import java.util.Scanner;
 import java.util.UUID;
@@ -16,7 +17,9 @@ public class Main {
          String nationalId="30212121700915";
          String emailAddress="omarmoharam790@gmail.com";
          String phoneNumber="01064385332";
-        Customer customer = new Customer(systemId, name, nationalId, emailAddress, phoneNumber);
+        UUID customerId = IdGenerator.generateCustomerId();
+        Customer customer = new Customer(customerId, name, nationalId, emailAddress, phoneNumber);
+
 //        SavingsAccount fb = new SavingsAccount(
 //                "1234567891011456",
 //                    customer
