@@ -8,10 +8,14 @@ public class Customer extends Person {
 
    private List<Account> accounts;
 
-    public Customer(UUID systemId, String name, String nationalId, String emailAddress, String phoneNumber) {
+   public Customer(String name, String nationalId) {
+       super(name, nationalId);
+       System.out.println("Creating customer with name: " + name + " and nationalId: " + nationalId);
+
+   }
+    public Customer(String systemId, String name, String nationalId, String emailAddress, String phoneNumber) {
         super(systemId, name, nationalId, emailAddress, phoneNumber);
     }
-
     public List<Account> getAccounts() {
         return accounts;
     }

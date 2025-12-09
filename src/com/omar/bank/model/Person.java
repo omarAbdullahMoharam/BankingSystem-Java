@@ -4,14 +4,18 @@ import java.util.UUID;
 
 public abstract class Person {
 //  -- is a UUID---> unique ID in the entire system
-    private UUID systemId;
+    private String systemId;
     private String name;
     private String nationalId;
     private String emailAddress;
     private String phoneNumber;
 
+    public Person(String name, String nationalId) {
+        this.name = name;
+        this.nationalId = nationalId;
+    }
 
-    public Person(UUID systemId, String name, String nationalId, String emailAddress, String phoneNumber) {
+    public Person(String systemId, String name, String nationalId, String emailAddress, String phoneNumber) {
         this.systemId = systemId;
         this.name = name;
         this.nationalId = nationalId;
@@ -20,11 +24,11 @@ public abstract class Person {
 
     }
 
-    public UUID getSystemId() {
+    public String getSystemId() {
         return systemId;
     }
 
-    public void setSystemId(UUID systemId) {
+    public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
 
