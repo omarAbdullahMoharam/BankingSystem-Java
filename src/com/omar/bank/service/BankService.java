@@ -15,7 +15,9 @@ public class BankService {
     private final List<Account> accounts = new ArrayList<>();
 //    private final Map<Customer, List<Account>> customerAccountsMap =  new java.util.HashMap<>();
 
-    private BankService() {}
+    private BankService() {
+
+    }
     private static class BankServiceHolder {
         private static final BankService INSTANCE = new BankService();
     }
@@ -39,12 +41,13 @@ public class BankService {
 
 
 //    open account method --> Polymorphism
-    public void openAccount(Account accountType) throws DuplicateAccountException {
+    public void openAccount(Account accountType) throws DuplicateAccountException, NullPointerException {
         // Implementation for opening an account
 
         if (accountType == null) {
             throw new NullPointerException("Account type is null");
         }
+
 //        check if the account already exists
         boolean accountExists = accounts.stream()
                 .anyMatch((a) -> a.getAccountNumber().equals(accountType.getAccountNumber()));
@@ -54,6 +57,7 @@ public class BankService {
 
         accounts.add(accountType);
         Customer owner = accountType.getOwner();
+//        System.out.println("Adding account to owner: " + owner.getName());
         owner.addAccount(accountType);
 
     }

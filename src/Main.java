@@ -1,5 +1,5 @@
+import com.omar.bank.exception.DuplicateAccountException;
 import com.omar.bank.exception.DuplicateNationalIdException;
-import com.omar.bank.exception.InvalidAmountException;
 import com.omar.bank.model.CurrentAccount;
 import com.omar.bank.model.Customer;
 import com.omar.bank.model.SavingsAccount;
@@ -7,28 +7,25 @@ import com.omar.bank.service.BankService;
 import com.omar.bank.util.IdGenerator;
 
 import java.util.Scanner;
-import java.util.UUID;
-
-import static com.omar.bank.util.NumberFormatter.customFormatter;
 
 public class Main {
     public static void main(String[] args)  {
         Scanner in = new Scanner(System.in);
 
         BankService bankService = BankService.getInstance();
-        try {
-            bankService.createCustomer("Omar Abdullah Moharam","30212121700915");
-        } catch (DuplicateNationalIdException e) {
-            System.out.println("Error: " + e.getMessage());
-        }catch (Exception e)
-        {
-            System.out.println("Unexpected Error: " + e.getMessage());
-        }
-
-        for (var i: bankService.getCustomers() ) {
-            System.out.println("Customer Name: " + i.getName());
-            System.out.println("Customer National ID: " + i.getNationalId());
-        }
+//        try {
+//            bankService.createCustomer("Omar Abdullah Moharam","30212121700915");
+//        } catch (DuplicateNationalIdException e) {
+//            System.out.println("Error: " + e.getMessage());
+//        }catch (Exception e)
+//        {
+//            System.out.println("Unexpected Error: " + e.getMessage());
+//        }
+//
+//        for (var i: bankService.getCustomers() ) {
+//            System.out.println("Customer Name: " + i.getName());
+//            System.out.println("Customer National ID: " + i.getNationalId());
+//        }
         do {
             System.out.println("----------------------------------");
             System.out.println("1. Create Customer");
@@ -55,22 +52,24 @@ public class Main {
                 case "2" -> {
                     System.out.print("Enter Account Type (1 for Savings, 2 for Current): ");
                     String accountType = in.nextLine();
+
                     System.out.print("Enter Customer National ID: ");
                     String nationalId = in.nextLine();
+
                     Customer customer = bankService.getCustomers().stream()
                             .filter(c -> c.getNationalId().equals(nationalId))
                             .findFirst()
                             .orElse(null);
+
                     if (customer == null) {
                         System.out.println("Customer not found.");
                         break;
                     }
+
                     String accountNumber = IdGenerator.generateAccountNumber();
                     System.out.println("Generated Account Number: " + accountNumber);
 
                     try {
-                        System.out.println("Enter Account type (1 for Savings, 2 for Current): ");
-                        accountType = in.nextLine();
                         switch (accountType) {
                             case "1" -> {
                                 SavingsAccount savingsAccount = new SavingsAccount(accountNumber, customer);
@@ -86,18 +85,46 @@ public class Main {
                             }
                             default -> System.out.println("Invalid account type.");
                         }
-                    } catch (Exception e) {
+                    } catch (DuplicateAccountException | NullPointerException e) {
                         System.out.println("Error: " + e.getMessage());
+                    } catch (Exception e) {
+                        System.out.println("Unexpected Error: " + e.getMessage());
                     }
                 }
                 case "3" -> {
                     System.out.println("----- Customers List -----");
                     for (var customer : bankService.getCustomers()) {
-                        System.out.println("Customer Name: " + customer.getName());
+                        System.out.println("Customer Name       : " + customer.getName());
                         System.out.println("Customer National ID: " + customer.getNationalId());
+
+                        // Customer Accounts
+                        var customerAccounts = customer.getAccounts();
+                        System.out.println("Accounts count      : " + customerAccounts.size());
+
+                        if (customerAccounts.isEmpty()) {
+                            System.out.println("  (No accounts yet)");
+                        } else {
+                            System.out.println("  Accounts:");
+                            for (var account : customerAccounts) {
+                                String accountType;
+                                if (account instanceof SavingsAccount) {
+                                    accountType = "Savings";
+                                } else if (account instanceof CurrentAccount) {
+                                    accountType = "Current";
+                                } else {
+                                    accountType = "Unknown";
+                                }
+
+                                System.out.println("    - Account Number: " + account.getAccountNumber()
+                                        + " | Type: " + accountType
+                                        + " | Balance: " + account.getBalance());
+                            }
+                        }
+
                         System.out.println("--------------------------");
                     }
                 }
+
                 case "4" -> {
                     System.out.println("Exiting...");
                     return;

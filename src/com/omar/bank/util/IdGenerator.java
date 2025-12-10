@@ -16,8 +16,6 @@ public class IdGenerator {
     public static String getBranchCode() {
         return BRANCH_CODE;
     }
-    //    10010001
-//    private static long idCounter = 1000000000L;
 
     public static String generateCustomerId() {
 
@@ -25,7 +23,7 @@ public class IdGenerator {
     }
 
     public static String generateAccountNumber() {
-        String sequenceStr = String.format("%06d", accountSequence++);
+        String sequenceStr = String.format("%08d", accountSequence++);
         return BANK_CODE + BRANCH_CODE + sequenceStr;
     }
 
