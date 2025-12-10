@@ -1,22 +1,26 @@
-# Banking System - Java OOP & Exceptions
+# Banking Employee System—Java OOP
 
-A simple **Banking System** built with **Java**, following clean **OOP design principles** and focusing on **exception handling**.
+A simple **Banking System** implemented in **Java**, following clean **OOP design principles** and focusing on **robust exception handling**.
 
-This project simulates real banking operations such as customers, accounts, withdrawals, deposits, and validation logic using custom exceptions.
+This project simulates a **core banking system for bank employees**, allowing staff to manage customers, validate national IDs, and open savings/current accounts using a fully interactive CLI application.
 
 ---
 
 ## 📂 Project Structure
+
 ```text
 src/
 └── com/omar/bank
     ├── app/
-    │   └── FinanceBank.java
+    │   └── Main.java
     │
     ├── exception/
+    │   ├── DuplicateNationalIdException.java
+    │   ├── DuplicateAccountException.java
+    │   ├── InvalidAmountException.java
     │   ├── InsufficientAmountException.java
     │   ├── InvalidAccountException.java
-    │   └── InvalidAmountException.java
+    │   └── InvalidNationalIdException.java
     │
     ├── model/
     │   ├── Account.java
@@ -26,113 +30,151 @@ src/
     │   └── Person.java
     │
     ├── service/
-    │   └── PersonService.java
+    │   └── BankService.java
     │
     └── util/
+        ├── IdGenerator.java
+        ├── NationalIdValidator.java
         └── NumberFormatter.java
+
 ```
+## ⚙️ Main Features
 
----
-
-## ⚙️ Features
-
-✅ Account creation (Current / Savings)  
-✅ Customer & Person abstraction  
-✅ Deposit and Withdraw operations  
-✅ Withdraw fee handling  
-✅ Overdraft validation  
-✅ Input validation  
-✅ Clean separation between:
-- Models
-- Services
-- Utilities
-- Application logic
-
-✅ Custom exception handling
+* **Interactive CLI for bank employees:**
+    * `1. Create Customer` — validates national ID and prevents duplicates.
+    * `2. Add Account` — creates Savings or Current accounts for an existing customer.
+    * `3. Show Customers` — lists customers and their accounts.
+    * `4. Exit`
+* **Egyptian National ID validation** using `NationalIdValidator`.
+* **Automatic account number generation**.
+* **Overdraft support** in `CurrentAccount`.
+* **Custom exception handling**.
+* **Clean separation of concerns** (Models / Services / Utilities / Exceptions).
+* **In-memory management** of customers and accounts.
 
 ---
 
 ## ❗ Custom Exceptions
 
-The project includes custom exceptions to handle different error scenarios:
-
-### ```InvalidAmountException```
-Thrown when a negative or zero amount is used.
-
-### ```InsufficientAmountException```
-Thrown when balance is not enough to complete withdrawal.
-
-### ```InvalidAccountException```
-Thrown when an invalid or null account is used.
+| Exception | Purpose |
+|-----------|---------|
+| `DuplicateNationalIdException` | Customer with the same national ID already exists |
+| `DuplicateAccountException` | Account number already exists |
+| `InvalidNationalIdException` | Invalid Egyptian national ID format |
+| `InvalidAmountException` | Deposit/Withdraw amount is zero or negative |
+| `InsufficientAmountException` | Balance not sufficient |
+| `InvalidAccountException` | Null or invalid account reference |
 
 ---
 
-## 🏗️ Core Classes
+## 🏗️ Core Classes & Responsibilities
 
-### 🔹 Person
-Base class that represents a person in the system.
+### 🔹 Main
+Interactive CLI entry point.
 
-### 🔹 Customer
-Inherits from Person and adds customer-related data.
+### 🔹 BankService (Singleton)
+Handles all:
+* Customer creation
+* Account management
+* Validation
+* Duplicate checks
 
-### 🔹 Account (Abstract / Parent Class)
-Represents a bank account with basic operations such as:
-- Deposit
-- Withdraw
-- Get balance
+### 🔹 Customer / Person
+Represent customer identity and personal information.
 
-### 🔹 CurrentAccount & SavingsAccount
-Different types of accounts extending Account:
-- **CurrentAccount** → supports overdraft
-- **SavingsAccount** → normal balance restriction
+### 🔹 Account (Abstract Class)
+Contains:
+* `deposit()`
+* `withdraw()`
+* `getBalance()`
+* shared logic across account types
 
-### 🔹 PersonService
-Handles operations related to persons and customers.
+### 🔹 SavingsAccount
+Standard account with no overdraft.
+
+### 🔹 CurrentAccount
+Supports overdraft limits.
+
+### 🔹 IdGenerator
+Creates:
+* Unique account numbers
+* Customer IDs
+
+### 🔹 NationalIdValidator
+Validates Egyptian national ID:
+* Format
+* Date
+* Governorate code
 
 ### 🔹 NumberFormatter
-Utility class used to format currency and numbers for display.
-
-### 🔹 FinanceBank (Main Class)
-Main entry point of the application.  
-Contains the `main()` method to run the system and test banking operations.
+Formats currency and numbers for display.
 
 ---
 
 ## 🚀 How to Run
 
-### Option 1: From IDE (Recommended)
-1. Open project using IntelliJ / Eclipse / VS Code
-2. Navigate to: `com.omar.bank.app.FinanceBank`
-3. Right-click → Run
+### ▶ Option 1: Using an IDE (Recommended)
 
-### Option 2: From Terminal
-From inside `src` folder:
+1. Open project in IntelliJ / Eclipse / VS Code
+2. Run:
+   ```
+   com.omar.bank.app.Main
+   ```
+
+### ▶ Option 2: Using Terminal
+
 ```bash
-javac com/omar/bank/app/FinanceBank.java
-java com/omar/bank/app/FinanceBank
+javac src/com/omar/bank/app/Main.java
+java -cp src com.omar.bank.app.Main
 ```
 
 ---
 
-## 🧠 OOP Concepts Applied
+## 🔍 Example CLI Flow
 
-- Encapsulation
-- Inheritance
-- Polymorphism
-- Abstraction
-- Method Overriding
-- Exception Handling
-- Clean Package Management
+### Create Customer
+```
+1 → Enter Name → Enter National ID → Validated → Customer Created
+```
+
+### Add Account
+```
+2 → Select Customer → Choose Savings/Current → Enter overdraft (if current)
+```
+
+### Show Customers
+Displays:
+* Names
+* National IDs
+* Number of accounts
+* Account types and numbers
+
+**Errors are handled with custom exceptions and printed cleanly.**
+
+---
+
+## 🧠 Concepts Demonstrated
+
+* **OOP Design**
+* **Encapsulation**
+* **Abstraction**
+* **Inheritance**
+* **Polymorphism**
+* **Exception Handling**
+* **Validation**
+* **Clean architecture and separation of concerns**
 
 ---
 
 ## 📌 Future Improvements
 
-🔹 Add file or database persistence  
-🔹 Create interactive menu  
-🔹 Add login system  
-🔹 Add unit testing with JUnit  
-🔹 Improve design with interfaces and design patterns
+* Database persistence (H2 / MySQL / SQLite)
+* Employee Login System
+* Role-based access (Admin / Teller)
+* Account statement & transaction history
+* Logging (Log4j / SLF4J)
+* Unit testing (JUnit)
+* GUI or Spring Boot REST API version
 
 ---
 
@@ -141,4 +183,4 @@ java com/omar/bank/app/FinanceBank
 **Omar Abdullah Moharam**  
 GitHub: [https://github.com/omarAbdullahMoharam](https://github.com/omarAbdullahMoharam)
 
-*This project is for educational purposes to practice core Java concepts, OOP design, and exception handling.*
+*This project is for educational purposes to practice Java OOP, clean design, and exception handling.*
