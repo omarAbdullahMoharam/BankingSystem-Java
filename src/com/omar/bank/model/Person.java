@@ -1,5 +1,7 @@
 package com.omar.bank.model;
 
+import com.omar.bank.util.NationalIdValidator;
+
 import java.util.UUID;
 
 public abstract class Person {
@@ -11,11 +13,21 @@ public abstract class Person {
     private String phoneNumber;
 
     public Person(String name, String nationalId) {
+        try {
+            NationalIdValidator.validateNationalId(nationalId);
+        } catch (Exception e) {
+            System.out.println("Error : " + e.getMessage());
+        }
         this.name = name;
         this.nationalId = nationalId;
     }
 
     public Person(String systemId, String name, String nationalId, String emailAddress, String phoneNumber) {
+        try {
+            NationalIdValidator.validateNationalId(nationalId);
+        }catch (RuntimeException e) {
+            System.out.println("Error : " + e.getMessage());
+        }
         this.systemId = systemId;
         this.name = name;
         this.nationalId = nationalId;

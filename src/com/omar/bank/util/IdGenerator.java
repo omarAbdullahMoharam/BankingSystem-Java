@@ -8,7 +8,7 @@ public class IdGenerator {
     private static final String CUSTOMER_ID_PREFIX = "FIN-";
     private static final String BANK_CODE = "1001";
     private static final String BRANCH_CODE = "0001";
-    private static int accountSequence = 1;
+    private static long accountSequence = 1;
 
     public static String getBankCode() {
         return BANK_CODE;
@@ -18,9 +18,9 @@ public class IdGenerator {
     }
 
     public static String generateCustomerId() {
-
         return "FIN-" + UUID.randomUUID();
     }
+
 
     public static String generateAccountNumber() {
         String sequenceStr = String.format("%08d", accountSequence++);

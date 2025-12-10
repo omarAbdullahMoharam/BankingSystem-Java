@@ -5,6 +5,7 @@ import com.omar.bank.model.Customer;
 import com.omar.bank.model.SavingsAccount;
 import com.omar.bank.service.BankService;
 import com.omar.bank.util.IdGenerator;
+import com.omar.bank.util.NationalIdValidator;
 
 import java.util.Scanner;
 
@@ -12,7 +13,7 @@ public class Main {
     public static void main(String[] args)  {
         Scanner in = new Scanner(System.in);
 
-        BankService bankService = BankService.getInstance();
+      final BankService bankService = BankService.getInstance();
 //        try {
 //            bankService.createCustomer("Omar Abdullah Moharam","30212121700915");
 //        } catch (DuplicateNationalIdException e) {
@@ -40,6 +41,12 @@ public class Main {
                     String name = in.nextLine();
                     System.out.print("Enter Customer National ID: ");
                     String nationalId = in.nextLine();
+                    try {
+                        NationalIdValidator.validateNationalId(nationalId);
+                    } catch (Exception e) {
+                        System.out.println("Error: " + e.getMessage());
+                        break;
+                    }
                     try {
                         bankService.createCustomer(name, nationalId);
                         System.out.println("Customer created successfully.");
@@ -117,7 +124,8 @@ public class Main {
 
                                 System.out.println("    - Account Number: " + account.getAccountNumber()
                                         + " | Type: " + accountType
-                                        + " | Balance: " + account.getBalance());
+                                );
+//                                        + " | Balance: " + account.getBalance());
                             }
                         }
 
