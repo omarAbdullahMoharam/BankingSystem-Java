@@ -1,13 +1,14 @@
 package com.omar.bank.model;
 
 import com.omar.bank.exception.InsufficientAmountException;
+import com.omar.bank.exception.InvalidAccountException;
 import com.omar.bank.exception.InvalidAmountException;
 
 public class CurrentAccount extends Account{
 
     private double overdraftLimit;
 
-    public CurrentAccount(String accountNumber, Customer owner, double overdraftLimit) {
+    public CurrentAccount(String accountNumber, Customer owner, double overdraftLimit) throws InvalidAccountException {
         super(accountNumber, owner, AccountType.CURRENT);
         this.overdraftLimit = overdraftLimit;
     }

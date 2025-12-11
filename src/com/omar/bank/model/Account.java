@@ -97,8 +97,9 @@ protected Account(String accountNumber, Customer owner, AccountType accountType)
         return "Account{" +
                 "accountNumber='" + accountNumber + '\'' +
                 ", balance=" + balance +
-                ", owner=" + owner +
+                ", ownerNationalId=" + (owner != null ? owner.getNationalId() : "null") +
                 '}';
     }
+
 
 }

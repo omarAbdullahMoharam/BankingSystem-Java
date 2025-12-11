@@ -1,17 +1,16 @@
+package com.omar.bank;
 import com.omar.bank.exception.DuplicateAccountException;
 import com.omar.bank.exception.DuplicateNationalIdException;
+import com.omar.bank.exception.InvalidAccountException;
 import com.omar.bank.model.CurrentAccount;
 import com.omar.bank.model.Customer;
 import com.omar.bank.model.SavingsAccount;
 import com.omar.bank.service.BankService;
 import com.omar.bank.util.IdGenerator;
 import com.omar.bank.util.NationalIdValidator;
-import java.util.Scanner;
-
-import com.omar.bank.exception.InvalidAccountException;
-
 
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
     private static final BankService bankService = BankService.getInstance();
@@ -107,15 +106,31 @@ public class Main {
         System.out.println();
         System.out.println("Generated Account Number : " + accountNumber);
 
+        switch (accountType) {
+            case "1" -> createSavingsAccount(accountNumber, customer);
+            case "2" -> createCurrentAccount(in, accountNumber, customer);
+            default -> System.out.println("[!] Invalid account type. Choose 1 or 2.");
+        }
+    }
+
+    private static void createSavingsAccount(String accountNumber, Customer customer) {
         try {
-            switch (accountType) {
-                case "1" -> createSavingsAccount(accountNumber, customer);
-                case "2" -> createCurrentAccount(in, accountNumber, customer);
-                default -> System.out.println("[!] Invalid account type. Choose 1 or 2.");
-            }
-        } catch (DuplicateAccountException | InvalidAccountException e) {
+            SavingsAccount savingsAccount = new SavingsAccount(accountNumber, customer);
+            bankService.openAccount(savingsAccount);
+
             System.out.println();
-            System.out.println("[Error] " + e.getMessage());
+            System.out.println("----- Savings Account Created -----");
+            System.out.printf("Customer : %s%n", customer.getName());
+            System.out.printf("Account  : %s%n", savingsAccount.getAccountNumber());
+            System.out.println("-----------------------------------");
+            System.out.println();
+        } catch (InvalidAccountException e) {
+            System.out.println();
+            System.out.println("[Invalid Account] " + e.getMessage());
+            System.out.println();
+        } catch (DuplicateAccountException e) {
+            System.out.println();
+            System.out.println("[Duplicate Account] " + e.getMessage());
             System.out.println();
         } catch (Exception e) {
             System.out.println();
@@ -124,21 +139,7 @@ public class Main {
         }
     }
 
-    private static void createSavingsAccount(String accountNumber, Customer customer)
-            throws DuplicateAccountException, InvalidAccountException {
-        SavingsAccount savingsAccount = new SavingsAccount(accountNumber, customer);
-        bankService.openAccount(savingsAccount);
-
-        System.out.println();
-        System.out.println("----- Savings Account Created -----");
-        System.out.printf("Customer : %s%n", customer.getName());
-        System.out.printf("Account  : %s%n", savingsAccount.getAccountNumber());
-        System.out.println("-----------------------------------");
-        System.out.println();
-    }
-
-    private static void createCurrentAccount(Scanner in, String accountNumber, Customer customer)
-            throws DuplicateAccountException, InvalidAccountException {
+    private static void createCurrentAccount(Scanner in, String accountNumber, Customer customer) {
         System.out.print("Enter Overdraft Limit: ");
         String overdraftInput = in.nextLine().trim();
         double overdraftLimit;
@@ -151,16 +152,30 @@ public class Main {
             return;
         }
 
-        CurrentAccount currentAccount = new CurrentAccount(accountNumber, customer, overdraftLimit);
-        bankService.openAccount(currentAccount);
+        try {
+            CurrentAccount currentAccount = new CurrentAccount(accountNumber, customer, overdraftLimit);
+            bankService.openAccount(currentAccount);
 
-        System.out.println();
-        System.out.println("----- Current Account Created -----");
-        System.out.printf("Customer       : %s%n", customer.getName());
-        System.out.printf("Account        : %s%n", currentAccount.getAccountNumber());
-        System.out.printf("Overdraft Limit: %s%n", overdraftLimit);
-        System.out.println("-----------------------------------");
-        System.out.println();
+            System.out.println();
+            System.out.println("----- Current Account Created -----");
+            System.out.printf("Customer       : %s%n", customer.getName());
+            System.out.printf("Account        : %s%n", currentAccount.getAccountNumber());
+            System.out.printf("Overdraft Limit: %s%n", overdraftLimit);
+            System.out.println("-----------------------------------");
+            System.out.println();
+        } catch (InvalidAccountException e) {
+            System.out.println();
+            System.out.println("[Invalid Account] " + e.getMessage());
+            System.out.println();
+        } catch (DuplicateAccountException e) {
+            System.out.println();
+            System.out.println("[Duplicate Account] " + e.getMessage());
+            System.out.println();
+        } catch (Exception e) {
+            System.out.println();
+            System.out.println("[Unexpected Error] " + e.getMessage());
+            System.out.println();
+        }
     }
 
     private static void handleShowCustomers() {

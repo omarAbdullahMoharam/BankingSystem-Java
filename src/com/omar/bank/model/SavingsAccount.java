@@ -1,13 +1,14 @@
 package com.omar.bank.model;
 
 import com.omar.bank.exception.InsufficientAmountException;
+import com.omar.bank.exception.InvalidAccountException;
 import com.omar.bank.exception.InvalidAmountException;
 
 import static com.omar.bank.util.NumberFormatter.customFormatter;
 
 public class SavingsAccount extends Account {
 
-    public SavingsAccount(String accountNumber, Customer owner) {
+    public SavingsAccount(String accountNumber, Customer owner) throws InvalidAccountException {
         super(accountNumber, owner, AccountType.SAVINGS);
     }
 
