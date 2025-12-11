@@ -6,140 +6,233 @@ import com.omar.bank.model.SavingsAccount;
 import com.omar.bank.service.BankService;
 import com.omar.bank.util.IdGenerator;
 import com.omar.bank.util.NationalIdValidator;
-
 import java.util.Scanner;
 
+import com.omar.bank.exception.InvalidAccountException;
+
+
+import java.util.List;
+
 public class Main {
-    public static void main(String[] args)  {
+    private static final BankService bankService = BankService.getInstance();
+
+    public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
 
-      final BankService bankService = BankService.getInstance();
-//        try {
-//            bankService.createCustomer("Omar Abdullah Moharam","30212121700915");
-//        } catch (DuplicateNationalIdException e) {
-//            System.out.println("Error: " + e.getMessage());
-//        }catch (Exception e)
-//        {
-//            System.out.println("Unexpected Error: " + e.getMessage());
-//        }
-//
-//        for (var i: bankService.getCustomers() ) {
-//            System.out.println("Customer Name: " + i.getName());
-//            System.out.println("Customer National ID: " + i.getNationalId());
-//        }
-        do {
-            System.out.println("----------------------------------");
-            System.out.println("1. Create Customer");
-            System.out.println("2. Add Account");
-            System.out.println("3. Show Customers");
-            System.out.println("4. Exit");
+        while (true) {
+            printMenu();
             System.out.print("Enter your choice: ");
-            String choice = in.nextLine();
+            String choice = in.nextLine().trim();
+
             switch (choice) {
-                case "1" -> {
-                    System.out.print("Enter Customer Name: ");
-                    String name = in.nextLine();
-                    System.out.print("Enter Customer National ID: ");
-                    String nationalId = in.nextLine();
-                    try {
-                        NationalIdValidator.validateNationalId(nationalId);
-                    } catch (Exception e) {
-                        System.out.println("Error: " + e.getMessage());
-                        break;
-                    }
-                    try {
-                        bankService.createCustomer(name, nationalId);
-                        System.out.println("Customer created successfully.");
-                    } catch (DuplicateNationalIdException e) {
-                        System.out.println("Error: " + e.getMessage());
-                    } catch (Exception e) {
-                        System.out.println("Unexpected Error: " + e.getMessage());
-                    }
-                }
-                case "2" -> {
-                    System.out.print("Enter Account Type (1 for Savings, 2 for Current): ");
-                    String accountType = in.nextLine();
-
-                    System.out.print("Enter Customer National ID: ");
-                    String nationalId = in.nextLine();
-
-                    Customer customer = bankService.getCustomers().stream()
-                            .filter(c -> c.getNationalId().equals(nationalId))
-                            .findFirst()
-                            .orElse(null);
-
-                    if (customer == null) {
-                        System.out.println("Customer not found.");
-                        break;
-                    }
-
-                    String accountNumber = IdGenerator.generateAccountNumber();
-                    System.out.println("Generated Account Number: " + accountNumber);
-
-                    try {
-                        switch (accountType) {
-                            case "1" -> {
-                                SavingsAccount savingsAccount = new SavingsAccount(accountNumber, customer);
-                                bankService.openAccount(savingsAccount);
-                                System.out.println("Savings Account created successfully.");
-                            }
-                            case "2" -> {
-                                System.out.print("Enter Overdraft Limit: ");
-                                double overdraftLimit = Double.parseDouble(in.nextLine());
-                                CurrentAccount currentAccount = new CurrentAccount(accountNumber, customer, overdraftLimit);
-                                bankService.openAccount(currentAccount);
-                                System.out.println("Current Account created successfully.");
-                            }
-                            default -> System.out.println("Invalid account type.");
-                        }
-                    } catch (DuplicateAccountException | NullPointerException e) {
-                        System.out.println("Error: " + e.getMessage());
-                    } catch (Exception e) {
-                        System.out.println("Unexpected Error: " + e.getMessage());
-                    }
-                }
-                case "3" -> {
-                    System.out.println("----- Customers List -----");
-                    for (var customer : bankService.getCustomers()) {
-                        System.out.println("Customer Name       : " + customer.getName());
-                        System.out.println("Customer National ID: " + customer.getNationalId());
-
-                        // Customer Accounts
-                        var customerAccounts = customer.getAccounts();
-                        System.out.println("Accounts count      : " + customerAccounts.size());
-
-                        if (customerAccounts.isEmpty()) {
-                            System.out.println("  (No accounts yet)");
-                        } else {
-                            System.out.println("  Accounts:");
-                            for (var account : customerAccounts) {
-                                String accountType;
-                                if (account instanceof SavingsAccount) {
-                                    accountType = "Savings";
-                                } else if (account instanceof CurrentAccount) {
-                                    accountType = "Current";
-                                } else {
-                                    accountType = "Unknown";
-                                }
-
-                                System.out.println("    - Account Number: " + account.getAccountNumber()
-                                        + " | Type: " + accountType
-                                );
-//                                        + " | Balance: " + account.getBalance());
-                            }
-                        }
-
-                        System.out.println("--------------------------");
-                    }
-                }
-
-                case "4" -> {
-                    System.out.println("Exiting...");
+                case "1" -> handleCreateCustomer(in);
+                case "2" -> handleAddAccount(in);
+                case "3" -> handleShowCustomers();
+                case "4" -> handleGetAccountsByNationalId(in);
+                case "5" -> {
+                    handleExit();
                     return;
                 }
-                default -> System.out.println("Invalid choice. Please try again.");
+                default -> {
+                    System.out.println();
+                    System.out.println("[!] Invalid choice. Please try again.");
+                    System.out.println();
+                }
             }
-        }while (true);
+        }
+    }
+
+    private static void printMenu() {
+        System.out.println("----------------------------------------");
+        System.out.println("         Finance Bank - Main Menu       ");
+        System.out.println("----------------------------------------");
+        System.out.println("1. Create Customer");
+        System.out.println("2. Add Account");
+        System.out.println("3. Show Customers");
+        System.out.println("4. Get Accounts by Customer National ID");
+        System.out.println("5. Exit");
+        System.out.println("----------------------------------------");
+    }
+
+    private static void handleCreateCustomer(Scanner in) {
+        System.out.println();
+        System.out.print("Enter Customer Name: ");
+        String name = in.nextLine().trim();
+
+        System.out.print("Enter Customer National ID: ");
+        String nationalId = in.nextLine().trim();
+
+        try {
+            // validate national ID first
+            NationalIdValidator.validateNationalId(nationalId);
+
+            Customer c = bankService.createCustomer(name, nationalId);
+
+            System.out.println();
+            System.out.println("===== Customer Created Successfully =====");
+            System.out.printf("System ID     : %s%n", c.getSystemId());
+            System.out.printf("Customer Name : %s%n", c.getName());
+            System.out.printf("National ID   : %s%n", c.getNationalId());
+            System.out.println("=========================================");
+            System.out.println();
+
+        } catch (DuplicateNationalIdException e) {
+            System.out.println();
+            System.out.println("[Error] " + e.getMessage());
+            System.out.println();
+        } catch (Exception e) {
+            System.out.println();
+            System.out.println("[Unexpected Error] " + e.getMessage());
+            System.out.println();
+        }
+    }
+
+    private static void handleAddAccount(Scanner in) {
+        System.out.println();
+        System.out.print("Enter Account Type (1 for Savings, 2 for Current): ");
+        String accountType = in.nextLine().trim();
+
+        System.out.print("Enter Customer National ID: ");
+        String nationalId = in.nextLine().trim();
+
+        Customer customer = bankService.findCustomerByNationalId(nationalId);
+        if (customer == null) {
+            System.out.println();
+            System.out.println("[!] Customer not found. Register customer first.");
+            System.out.println();
+            return;
+        }
+
+        String accountNumber = IdGenerator.generateAccountNumber();
+        System.out.println();
+        System.out.println("Generated Account Number : " + accountNumber);
+
+        try {
+            switch (accountType) {
+                case "1" -> createSavingsAccount(accountNumber, customer);
+                case "2" -> createCurrentAccount(in, accountNumber, customer);
+                default -> System.out.println("[!] Invalid account type. Choose 1 or 2.");
+            }
+        } catch (DuplicateAccountException | InvalidAccountException e) {
+            System.out.println();
+            System.out.println("[Error] " + e.getMessage());
+            System.out.println();
+        } catch (Exception e) {
+            System.out.println();
+            System.out.println("[Unexpected Error] " + e.getMessage());
+            System.out.println();
+        }
+    }
+
+    private static void createSavingsAccount(String accountNumber, Customer customer)
+            throws DuplicateAccountException, InvalidAccountException {
+        SavingsAccount savingsAccount = new SavingsAccount(accountNumber, customer);
+        bankService.openAccount(savingsAccount);
+
+        System.out.println();
+        System.out.println("----- Savings Account Created -----");
+        System.out.printf("Customer : %s%n", customer.getName());
+        System.out.printf("Account  : %s%n", savingsAccount.getAccountNumber());
+        System.out.println("-----------------------------------");
+        System.out.println();
+    }
+
+    private static void createCurrentAccount(Scanner in, String accountNumber, Customer customer)
+            throws DuplicateAccountException, InvalidAccountException {
+        System.out.print("Enter Overdraft Limit: ");
+        String overdraftInput = in.nextLine().trim();
+        double overdraftLimit;
+        try {
+            overdraftLimit = Double.parseDouble(overdraftInput);
+        } catch (NumberFormatException e) {
+            System.out.println();
+            System.out.println("[!] Invalid overdraft amount. Operation cancelled.");
+            System.out.println();
+            return;
+        }
+
+        CurrentAccount currentAccount = new CurrentAccount(accountNumber, customer, overdraftLimit);
+        bankService.openAccount(currentAccount);
+
+        System.out.println();
+        System.out.println("----- Current Account Created -----");
+        System.out.printf("Customer       : %s%n", customer.getName());
+        System.out.printf("Account        : %s%n", currentAccount.getAccountNumber());
+        System.out.printf("Overdraft Limit: %s%n", overdraftLimit);
+        System.out.println("-----------------------------------");
+        System.out.println();
+    }
+
+    private static void handleShowCustomers() {
+        System.out.println();
+        List<Customer> customers = bankService.getCustomers();
+
+        if (customers.isEmpty()) {
+            System.out.println("[!] No customers registered yet.");
+            System.out.println();
+            return;
+        }
+
+        System.out.println("========== Customers List ==========");
+        for (Customer customer : customers) {
+            System.out.printf("Name        : %s%n", customer.getName());
+            System.out.printf("National ID : %s%n", customer.getNationalId());
+
+            var customerAccounts = customer.getAccounts();
+            System.out.printf("Accounts    : %d%n", customerAccounts.size());
+            if (customerAccounts.isEmpty()) {
+                System.out.println("  (No accounts yet)");
+            } else {
+                System.out.println("  Accounts:");
+                for (var account : customerAccounts) {
+                    String accountType = (account instanceof SavingsAccount) ? "Savings"
+                            : (account instanceof CurrentAccount) ? "Current" : "Unknown";
+
+                    System.out.printf("    - %s | Type: %s%n",
+                            account.getAccountNumber(), accountType);
+                }
+            }
+            System.out.println("-----------------------------------");
+        }
+        System.out.println("====================================");
+        System.out.println();
+    }
+
+    private static void handleGetAccountsByNationalId(Scanner in) {
+        System.out.println();
+        System.out.print("Enter Customer National ID to retrieve accounts: ");
+        String nationalId = in.nextLine().trim();
+
+        Customer customer = bankService.findCustomerByNationalId(nationalId);
+        if (customer == null) {
+            System.out.println();
+            System.out.println("[!] Customer not found, register first then try again.");
+            System.out.println();
+            return;
+        }
+
+        var accounts = customer.getAccounts();
+        System.out.println();
+        System.out.printf("Customer: %s | Number of Accounts: %d%n", customer.getName(), accounts.size());
+        if (accounts.isEmpty()) {
+            System.out.println("  (No accounts found for this customer.)");
+        } else {
+            for (var account : accounts) {
+                String accountType = (account instanceof SavingsAccount) ? "Savings"
+                        : (account instanceof CurrentAccount) ? "Current" : "Unknown";
+
+                System.out.printf(" - Account Number: %s | Type: %s%n", account.getAccountNumber(), accountType);
+            }
+        }
+        System.out.println();
+    }
+
+    private static void handleExit() {
+        System.out.println();
+        System.out.println("Thank you for using Finance Bank. Exiting...");
+        System.out.println();
+    }
+}
 
 
 //         UUID systemId =  UUID.randomUUID();
@@ -214,6 +307,6 @@ public class Main {
 //            }
 //        }while (!(option.equalsIgnoreCase("4")));
 //
-
-    }
-}
+//
+//    }
+//}
