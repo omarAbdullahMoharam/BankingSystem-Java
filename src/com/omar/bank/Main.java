@@ -14,7 +14,7 @@ import java.util.Scanner;
 
 public class Main {
     private static final BankService bankService = BankService.getInstance();
-
+//TODO: Change DataTypte from Double to BigDecimal for monetary values everywhere in the project
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
 
@@ -64,7 +64,6 @@ public class Main {
         try {
             // validate national ID first
             NationalIdValidator.validateNationalId(nationalId);
-
             Customer c = bankService.createCustomer(name, nationalId);
 
             System.out.println();
@@ -93,7 +92,6 @@ public class Main {
 
         System.out.print("Enter Customer National ID: ");
         String nationalId = in.nextLine().trim();
-
         Customer customer = bankService.findCustomerByNationalId(nationalId);
         if (customer == null) {
             System.out.println();
@@ -244,6 +242,7 @@ public class Main {
         System.out.println();
     }
 }
+//30212121700915
 
 
 //         UUID systemId =  UUID.randomUUID();

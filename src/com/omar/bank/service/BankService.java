@@ -48,7 +48,8 @@ public Customer createCustomer(String name, String nationalId)
     }
 
     String systemId = IdGenerator.generateCustomerId();
-    Customer customer = new Customer(name, nationalId, systemId);
+    Customer customer = new Customer(systemId, name, nationalId);
+
 //    System.out.println(customer.getSystemId());
     customersByNationalId.put(nationalId, customer);
     return customer;
