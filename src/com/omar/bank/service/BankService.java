@@ -2,6 +2,7 @@ package com.omar.bank.service;
 
 import com.omar.bank.exception.DuplicateAccountException;
 import com.omar.bank.exception.DuplicateNationalIdException;
+import com.omar.bank.exception.InvalidAccountException;
 import com.omar.bank.exception.InvalidNationalIdException;
 import com.omar.bank.model.Account;
 import com.omar.bank.model.Customer;
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.omar.bank.util.AccountValidator.validateAccountNumber;
 
 
 public class BankService {
@@ -44,8 +47,8 @@ public Customer createCustomer(String name, String nationalId)
         throw new DuplicateNationalIdException("Customer with this nationalId already exists");
     }
 
-    Customer customer = new Customer(name, nationalId);
-    customer.setSystemId(IdGenerator.generateCustomerId());
+    String systemId = IdGenerator.generateCustomerId();
+    Customer customer = new Customer(name, nationalId, systemId);
 //    System.out.println(customer.getSystemId());
     customersByNationalId.put(nationalId, customer);
     return customer;
@@ -53,7 +56,9 @@ public Customer createCustomer(String name, String nationalId)
 
 
     //    open account method --> Polymorphism
-    public Account openAccount(Account account) throws DuplicateAccountException {
+    public void openAccount(Account account)
+            throws DuplicateAccountException, InvalidAccountException {
+
         if (account == null) {
             throw new IllegalArgumentException("Account cannot be null");
         }
@@ -63,9 +68,13 @@ public Customer createCustomer(String name, String nationalId)
             throw new IllegalArgumentException("Account number cannot be null or empty");
         }
 
-        // duplicate check (null-safe)
+        // validate structure (length, prefix, digits, etc.)
+        validateAccountNumber(accNum);
+
+        // check duplicate
         boolean accountExists = accounts.stream()
-                .anyMatch(a -> a.getAccountNumber() != null && a.getAccountNumber().equals(accNum));
+                .anyMatch(a -> accNum.equals(a.getAccountNumber()));
+
         if (accountExists) {
             throw new DuplicateAccountException("Account with this account number already exists");
         }
@@ -75,17 +84,14 @@ public Customer createCustomer(String name, String nationalId)
             throw new IllegalArgumentException("Account owner cannot be null");
         }
 
-        // optionally ensure the owner is a known customer
-        boolean ownerRegistered = customersByNationalId.containsKey(owner.getNationalId());
-        if (!ownerRegistered) {
+        // ensure owner is registered customer
+        if (!customersByNationalId.containsKey(owner.getNationalId())) {
             throw new IllegalArgumentException("Account owner is not registered as a customer");
         }
 
         // persist
         accounts.add(account);
         owner.addAccount(account);
-
-        return account;
     }
 
     public Customer findCustomerByNationalId(String nationalId) {

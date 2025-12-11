@@ -8,7 +8,7 @@ public class CurrentAccount extends Account{
     private double overdraftLimit;
 
     public CurrentAccount(String accountNumber, Customer owner, double overdraftLimit) {
-        super(accountNumber, owner);
+        super(accountNumber, owner, AccountType.CURRENT);
         this.overdraftLimit = overdraftLimit;
     }
 
@@ -26,7 +26,7 @@ public class CurrentAccount extends Account{
             throw new InvalidAmountException("Amount must be greater than 0");
         }
 
-        double feeAmount = amount * WITHDRAW_FEE_PERCENT;
+        double feeAmount = amount * Account.getWithdrawFeePercent();
         double total = amount+feeAmount;
         double validatedBalance = balance-total;
 
@@ -36,4 +36,5 @@ public class CurrentAccount extends Account{
         balance = validatedBalance;
         return amount;
     }
+
 }

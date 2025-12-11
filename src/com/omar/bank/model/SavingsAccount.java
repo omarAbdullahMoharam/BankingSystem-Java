@@ -8,7 +8,7 @@ import static com.omar.bank.util.NumberFormatter.customFormatter;
 public class SavingsAccount extends Account {
 
     public SavingsAccount(String accountNumber, Customer owner) {
-        super(accountNumber, owner);
+        super(accountNumber, owner, AccountType.SAVINGS);
     }
 
     @Override
@@ -18,7 +18,7 @@ public class SavingsAccount extends Account {
         {
             throw new InvalidAmountException("Amount must be greater than 0");
         }
-        double feeAmount = amount * WITHDRAW_FEE_PERCENT;
+        double feeAmount = amount * Account.getWithdrawFeePercent();
         double total = amount+feeAmount;
         if (total>balance) { // the total must be less than balance
             throw new InsufficientAmountException("Insufficient funds");
@@ -27,9 +27,10 @@ public class SavingsAccount extends Account {
             balance -= total;
             System.out.println("withdrawn : " + customFormatter(amount));
             System.out.println("Fee : " + customFormatter(feeAmount));
-            System.out.println("Total out : "+customFormatter(amount) + " Will be withdrawn\n");
+            System.out.println("Total out: "+customFormatter(amount) + " Will be withdrawn\n");
             return amount;
 
-
     }
+
+
 }

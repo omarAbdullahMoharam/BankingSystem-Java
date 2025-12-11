@@ -185,11 +185,9 @@ public class Main {
             } else {
                 System.out.println("  Accounts:");
                 for (var account : customerAccounts) {
-                    String accountType = (account instanceof SavingsAccount) ? "Savings"
-                            : (account instanceof CurrentAccount) ? "Current" : "Unknown";
 
                     System.out.printf("    - %s | Type: %s%n",
-                            account.getAccountNumber(), accountType);
+                            account.getAccountNumber(), account.getAccountType().label());
                 }
             }
             System.out.println("-----------------------------------");
@@ -218,10 +216,8 @@ public class Main {
             System.out.println("  (No accounts found for this customer.)");
         } else {
             for (var account : accounts) {
-                String accountType = (account instanceof SavingsAccount) ? "Savings"
-                        : (account instanceof CurrentAccount) ? "Current" : "Unknown";
 
-                System.out.printf(" - Account Number: %s | Type: %s%n", account.getAccountNumber(), accountType);
+                System.out.printf(" - Account Number: %s | Type: %s%n", account.getAccountNumber(), account.getAccountType().label());
             }
         }
         System.out.println();

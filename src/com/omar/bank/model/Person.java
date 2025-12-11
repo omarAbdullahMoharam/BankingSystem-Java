@@ -5,70 +5,85 @@ import com.omar.bank.util.NationalIdValidator;
 import static java.util.UUID.randomUUID;
 
 public abstract class Person {
-//  -- is a UUID---> unique ID in the entire system
-    private String systemId;
-    private String name;
-    private String nationalId;
+
+    private final String systemId;       // immutable
+    private String name;                 // mutable (optional)
+    private final String nationalId;     // immutable
     private String emailAddress;
     private String phoneNumber;
 
+    // Constructor 1 (Basic)
     public Person(String name, String nationalId) {
-
-            NationalIdValidator.validateNationalId(nationalId);
-            this.systemId = randomUUID().toString();
-            this.name = name;
-            this.nationalId = nationalId;
-
-   }
-
-    public Person(String systemId, String name, String nationalId, String emailAddress, String phoneNumber) {
+        validateName(name);
         NationalIdValidator.validateNationalId(nationalId);
-        this.systemId = systemId;
+
+        this.systemId = randomUUID().toString();
+        this.name = name;
+        this.nationalId = nationalId;
+    }
+
+
+    // Constructor 2 (Full)
+    public Person(String systemId, String name, String nationalId, String emailAddress, String phoneNumber) {
+        validateName(name);
+        NationalIdValidator.validateNationalId(nationalId);
+
+        this.systemId = (systemId == null || systemId.isBlank()) ? randomUUID().toString() : systemId;
         this.name = name;
         this.nationalId = nationalId;
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
-
     }
-
+    public Person(String systemId, String name, String nationalId) {
+        validateName(name);
+        NationalIdValidator.validateNationalId(nationalId);
+        this.systemId = (systemId == null || systemId.isBlank()) ? randomUUID().toString() : systemId;
+        this.name = name;
+        this.nationalId = nationalId;
+    }
+    // Getters
     public String getSystemId() {
         return systemId;
-    }
-
-    public void setSystemId(String systemId) {
-        this.systemId = systemId;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getNationalId() {
         return nationalId;
-    }
-
-    public void setNationalId(String nationalId) {
-        NationalIdValidator.validateNationalId(nationalId);
-        this.nationalId = nationalId;
     }
 
     public String getEmailAddress() {
         return emailAddress;
     }
 
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
-    }
-
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
+    // Allowed setters
+    public void setName(String name) {
+        validateName(name);
+        this.name = name;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    // Disallowed setters (removed)
+    // public void setSystemId(...)
+    // public void setNationalId(...)
+
+    // helpers
+    private void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Name cannot be null, empty, or blank");
+        }
     }
 }
