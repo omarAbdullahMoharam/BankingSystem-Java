@@ -2,7 +2,7 @@ package com.omar.bank.model;
 
 import com.omar.bank.util.NationalIdValidator;
 
-import java.util.UUID;
+import static java.util.UUID.randomUUID;
 
 public abstract class Person {
 //  -- is a UUID---> unique ID in the entire system
@@ -13,21 +13,16 @@ public abstract class Person {
     private String phoneNumber;
 
     public Person(String name, String nationalId) {
-        try {
+
             NationalIdValidator.validateNationalId(nationalId);
-        } catch (Exception e) {
-            System.out.println("Error : " + e.getMessage());
-        }
-        this.name = name;
-        this.nationalId = nationalId;
-    }
+            this.systemId = randomUUID().toString();
+            this.name = name;
+            this.nationalId = nationalId;
+
+   }
 
     public Person(String systemId, String name, String nationalId, String emailAddress, String phoneNumber) {
-        try {
-            NationalIdValidator.validateNationalId(nationalId);
-        }catch (RuntimeException e) {
-            System.out.println("Error : " + e.getMessage());
-        }
+        NationalIdValidator.validateNationalId(nationalId);
         this.systemId = systemId;
         this.name = name;
         this.nationalId = nationalId;
@@ -57,6 +52,7 @@ public abstract class Person {
     }
 
     public void setNationalId(String nationalId) {
+        NationalIdValidator.validateNationalId(nationalId);
         this.nationalId = nationalId;
     }
 
