@@ -11,7 +11,7 @@ public class SavingsAccount extends Account {
     }
 
     @Override
-    public double withdraw(double amount) throws InsufficientAmountException, InvalidAmountException {
+    public void withdraw(double amount) throws InsufficientAmountException, InvalidAmountException {
 
         if (amount<=0) // negative or zero amount logically is not accepted
         {
@@ -26,7 +26,6 @@ public class SavingsAccount extends Account {
             balance -= total;
             Transaction transaction = new Transaction(TransactionType.WITHDRAWAL,amount,feeAmount,balance);
             recordTransaction(transaction);
-            return amount;
 
     }
 

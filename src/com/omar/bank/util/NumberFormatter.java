@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 
 public class NumberFormatter {
     private static final DateTimeFormatter TRANSACTION_FORMATTER =
-            DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a")
+            DateTimeFormatter.ofPattern("dd MMM yyyy - hh:mm a")
                     .withZone(ZoneId.systemDefault());
 //    you can use this pattern "yyyy-MM-dd HH:mm:ss" if you want to include seconds
 //    you can use this pattern "dd MMM yyyy, hh:mm a" for 12-hour format with AM/PM

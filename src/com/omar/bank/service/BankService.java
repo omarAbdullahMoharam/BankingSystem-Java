@@ -1,9 +1,6 @@
 package com.omar.bank.service;
 
-import com.omar.bank.exception.DuplicateAccountException;
-import com.omar.bank.exception.DuplicateNationalIdException;
-import com.omar.bank.exception.InvalidAccountException;
-import com.omar.bank.exception.InvalidNationalIdException;
+import com.omar.bank.exception.*;
 import com.omar.bank.model.Account;
 import com.omar.bank.model.Customer;
 import com.omar.bank.util.IdGenerator;
@@ -97,6 +94,44 @@ public Customer createCustomer(String name, String nationalId)
 
     public Customer findCustomerByNationalId(String nationalId) {
         return nationalId == null ? null : customersByNationalId.get(nationalId.trim());
+    }
+    public Account findAccountByNumber(String accountNumber) {
+        if (accountNumber == null) throw new InvalidAccountException("Account number cannot be null");
+        try {
+            validateAccountNumber(accountNumber);
+        } catch (InvalidAccountException e) {
+            throw new RuntimeException(e);
+        }
+        for (Account account : accounts) {
+            if (account.getAccountNumber().equals(accountNumber)) {
+                return account;
+            }
+        }
+        return null;
+    }
+
+    public void transferFunds(String fromAccount,String toAccount,double amount)
+     throws InvalidAccountException, InvalidNationalIdException {
+        if (fromAccount == null) {
+            throw new InvalidAccountException("From account cannot be null");
+        }
+        if (toAccount == null) {
+            throw new InvalidAccountException("To account cannot be null");
+        }
+        Account from = findAccountByNumber(fromAccount);
+        Account to = findAccountByNumber(toAccount);
+        try {
+            from.withdraw(amount);
+        } catch (InvalidAmountException | InsufficientAmountException e) {
+                throw new RuntimeException(e);
+        }
+        try {
+            to.deposit(amount);
+        } catch (InvalidAmountException e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 
     public List<Customer> getCustomers() {

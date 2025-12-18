@@ -5,7 +5,7 @@ import java.text.DecimalFormat;
 
 import static com.omar.bank.util.NumberFormatter.amountFormatter;
 
-public class FinanceBank {
+public class FinanceBankTest {
     private double balance;
     private static final double WITHDRAW_FEE_PERCENT = 0.01;
 
@@ -18,9 +18,9 @@ public class FinanceBank {
 //        this.nationalId = nationalId;
 //    }
 
-    public FinanceBank() {}
+    public FinanceBankTest() {}
 //
-//    public FinanceBank(String name, String nationalId, String email) {
+//    public FinanceBankTest(String name, String nationalId, String email) {
 //        this.name = name;
 //        this.nationalId = nationalId;
 //        this.email = email;

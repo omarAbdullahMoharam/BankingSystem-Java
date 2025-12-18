@@ -22,7 +22,7 @@ public class CurrentAccount extends Account{
     }
 
     @Override
-    public double withdraw(double amount) throws InvalidAmountException, InsufficientAmountException {
+    public void withdraw(double amount) throws InvalidAmountException, InsufficientAmountException {
         if (amount<=0){
             throw new InvalidAmountException("Amount must be greater than 0");
         }
@@ -38,7 +38,6 @@ public class CurrentAccount extends Account{
         Transaction transaction = new Transaction(TransactionType.WITHDRAWAL,amount,feeAmount,balance);
         recordTransaction(transaction);
 
-        return amount;
     }
 
 }

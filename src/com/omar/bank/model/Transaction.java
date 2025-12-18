@@ -3,7 +3,13 @@ package com.omar.bank.model;
 import com.omar.bank.util.IdGenerator;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
+/**
+ * Represents a financial record of an account operation
+ * (e.g. deposit, withdrawal).
+
+ * Transactions are part of the bank's audit and accounting system
+ * and are valid in both employee-assisted and automated operations.
+ */
 
 public class Transaction {
     private final String transactionId;

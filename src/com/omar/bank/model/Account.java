@@ -17,7 +17,7 @@ abstract public class Account {
     private final Customer owner;
     private final AccountType accountType;
     protected double balance;
-    private List<Transaction> transactions = new ArrayList<>();
+    private final List<Transaction> transactions = new ArrayList<>();
     //    validate: only numbers + length 16 + not changeable (Bank code + Branch code + Serial)
     private final String accountNumber;
 
@@ -70,7 +70,7 @@ protected Account(String accountNumber, Customer owner, AccountType accountType)
 
     }
 
-    public abstract double withdraw(double amount) throws InvalidAmountException, InsufficientAmountException;
+    public abstract void withdraw(double amount) throws InvalidAmountException, InsufficientAmountException;
     // helper for printing
     public String getTypeName() { return accountType.label(); }
 
