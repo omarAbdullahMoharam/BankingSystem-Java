@@ -3,7 +3,7 @@ import com.omar.bank.exception.InvalidAmountException;
 
 import java.text.DecimalFormat;
 
-import static com.omar.bank.util.NumberFormatter.customFormatter;
+import static com.omar.bank.util.NumberFormatter.amountFormatter;
 
 public class FinanceBank {
     private double balance;
@@ -27,7 +27,7 @@ public class FinanceBank {
 //    }
 
     public void balanceEnquery() {
-        System.out.println("Current balance : " + customFormatter(balance));
+        System.out.println("Current balance : " + amountFormatter(balance));
     }
 
     public void deposit(double amount) throws InvalidAmountException {
@@ -36,7 +36,7 @@ public class FinanceBank {
            throw new InvalidAmountException("Invalid amount");
         }
         balance = balance + amount;
-        System.out.println("Deposited : " + customFormatter(amount));
+        System.out.println("Deposited : " + amountFormatter(amount));
         this.balanceEnquery();
         System.out.println();
 
@@ -53,9 +53,9 @@ public class FinanceBank {
         }
         else {
             balance -= total;
-            System.out.println("withdrawn : " + customFormatter(amount));
-            System.out.println("Fee : " + customFormatter(feeAmount));
-            System.out.println("Total out : "+customFormatter(amount) + " Will be withdrawn\n");
+            System.out.println("withdrawn : " + amountFormatter(amount));
+            System.out.println("Fee : " + amountFormatter(feeAmount));
+            System.out.println("Total out : "+amountFormatter(amount) + " Will be withdrawn\n");
 
 //            void df.format(amount);
         }

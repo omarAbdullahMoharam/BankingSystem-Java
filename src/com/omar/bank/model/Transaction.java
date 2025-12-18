@@ -2,6 +2,7 @@ package com.omar.bank.model;
 
 import com.omar.bank.util.IdGenerator;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 public class Transaction {
@@ -10,7 +11,7 @@ public class Transaction {
     private final double amount;
     private final double fee;
     private final double total;
-    private final LocalDateTime timestamp;
+    private final Instant timestamp;
     private final double balanceAfter;
 
 
@@ -22,7 +23,7 @@ public class Transaction {
         this.fee= fee;
         this.total = amount + fee;
         this.balanceAfter = balanceAfter;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = Instant.now();
     }
     public String getTransactionId() {
         return transactionId;
@@ -39,7 +40,7 @@ public class Transaction {
     public double getTotal() {
         return total;
     }
-    public LocalDateTime getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
     public double getBalanceAfter() {

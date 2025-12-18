@@ -1,5 +1,6 @@
 package com.omar.bank;
 import com.omar.bank.exception.*;
+import com.omar.bank.model.Account;
 import com.omar.bank.model.CurrentAccount;
 import com.omar.bank.model.Customer;
 import com.omar.bank.model.SavingsAccount;
@@ -10,33 +11,140 @@ import com.omar.bank.util.NationalIdValidator;
 import java.util.List;
 import java.util.Scanner;
 
+import static com.omar.bank.util.NumberFormatter.timeFormatter;
+
 public class Main {
     private static final BankService bankService = BankService.getInstance();
 //TODO: Change DataTypte from Double to BigDecimal for monetary values everywhere in the project
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
 
-        while (true) {
-            printMenu();
-            System.out.print("Enter your choice: ");
-            String choice = in.nextLine().trim();
+//        while (true) {
+//            printMenu();
+//            System.out.print("Enter your choice: ");
+//            String choice = in.nextLine().trim();
+//
+//            switch (choice) {
+//                case "1" -> handleCreateCustomer(in);
+//                case "2" -> handleAddAccount(in);
+//                case "3" -> handleShowCustomers();
+//                case "4" -> handleGetAccountsByNationalId(in);
+//                case "5" -> {
+//                    handleExit();
+//                    return;
+//                }
+//                default -> {
+//                    System.out.println();
+//                    System.out.println("[!] Invalid choice. Please try again.");
+//                    System.out.println();
+//                }
+//            }
+//        }
 
-            switch (choice) {
-                case "1" -> handleCreateCustomer(in);
-                case "2" -> handleAddAccount(in);
-                case "3" -> handleShowCustomers();
-                case "4" -> handleGetAccountsByNationalId(in);
-                case "5" -> {
-                    handleExit();
-                    return;
-                }
-                default -> {
-                    System.out.println();
-                    System.out.println("[!] Invalid choice. Please try again.");
-                    System.out.println();
-                }
-            }
+        SavingsAccount fb = new SavingsAccount(
+                "1001000100000001",
+                new Customer("Omar Abdullah Moharam","30212121700915")
+        );
+        try {
+            fb.deposit(1000);
+            fb.deposit(200);
+            fb.getTransactions().forEach(t -> {
+                System.out.println(
+                        t.getType() + " | " +
+                                t.getAmount() + " | " +
+                                t.getBalanceAfter()+
+                                " | " + timeFormatter(t.getTimestamp())+
+                                " | " + t.getTransactionId()
+                );
+            });
+        } catch (InvalidAmountException e) {
+            System.out.println(e.getMessage());
         }
+
+        SavingsAccount sf = new SavingsAccount(
+                "1001000100000002",
+                new Customer("Ahmed Ali","29805231567890")
+        );
+
+        try {
+            sf.deposit(5000);
+//                sf.getTransactions().forEach(t -> {
+//                    System.out.println(
+//                            t.getType() + " | " + " deposit amount" +
+//                                    t.getAmount() + " | " + " After Balance: "+
+//                                    t.getBalanceAfter()+" Time"+
+//                                    " | " + t.getTimestamp()+" Transaction ID "+
+//                                    " | " + t.getTransactionId()
+//                    );
+//                });
+        } catch (InvalidAmountException e) {
+            System.out.println(e.getMessage());
+        }
+        try {
+            sf.withdraw(1000);
+//                System.out.println("withdrawn : " + customFormatter(amount));
+//                System.out.println("Fee : " + customFormatter(feeAmount));
+//                System.out.println("Total out: "+customFormatter(amount) + " Will be withdrawn\n");
+//                sf.getTransactions().forEach(t -> {
+//                    System.out.println(
+//                            t.getType() + " | " + " withdraw amount" +
+//                                    t.getAmount() + " | " + " After Balance: "+
+//                                    t.getBalanceAfter()+ " Time"+
+//                                    " | " + t.getTimestamp()+ " Transaction ID "+
+//                                    " | " + t.getTransactionId()
+//                    );
+//                });
+        } catch (InvalidAmountException | InsufficientAmountException e) {
+            System.out.println(e.getMessage());
+
+        }
+        System.out.println("Transactions for Savings Account:");
+        sf.getTransactions().forEach(t -> {
+            System.out.println(
+                    t.getType() + " | " +
+                            t.getAmount() + " | " + " After Balance: "+
+                            t.getBalanceAfter()+ " Time"+
+                            " | " +timeFormatter( t.getTimestamp())+ " Transaction ID "+
+                            " | " + t.getTransactionId()
+            );
+        });
+        CurrentAccount ca = new CurrentAccount(
+                "1001000100000003",
+                new Customer("Omar Test", "30001011234567"),
+                500
+        );
+
+        try {
+            ca.deposit(1000);     // balance = 1000
+        } catch (InvalidAmountException e) {
+            System.out.println(e.getMessage());
+        }
+        try {
+            ca.withdraw(1200);    // balance = -200 (OK)
+        } catch (InvalidAmountException|InsufficientAmountException e) {
+            System.out.println(e.getMessage());
+        }
+        try {
+            ca.withdraw(200);     // balance = -400 (OK)
+        }catch (InvalidAmountException|InsufficientAmountException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            ca.withdraw(200); // would be -600 ❌
+        } catch (InsufficientAmountException | InvalidAmountException e) {
+            System.out.println(e.getMessage());
+        }
+        System.out.println("Transactions for Current Account:");
+        ca.getTransactions().forEach(t -> {
+            System.out.println(
+                    t.getType() + " | " +
+                            t.getAmount() + " | " + " After Balance: "+
+                            t.getBalanceAfter()+ " Time"+
+                            " | " + timeFormatter(t.getTimestamp())+ " Transaction ID "+
+                            " | " + t.getTransactionId()
+            );
+        });
     }
 
         private static void printMenu() {
