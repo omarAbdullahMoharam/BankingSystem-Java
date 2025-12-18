@@ -27,7 +27,9 @@ public class IdGenerator {
         return BANK_CODE + BRANCH_CODE + sequenceStr;
     }
 
-
+    public static String generateTransactionId() {
+        return "TXN-" + UUID.randomUUID();
+    }
 
 
 }

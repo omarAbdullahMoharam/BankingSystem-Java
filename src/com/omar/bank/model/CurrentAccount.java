@@ -35,6 +35,9 @@ public class CurrentAccount extends Account{
             throw new InsufficientAmountException("Overdraft limit exceeded");
         }
         balance = validatedBalance;
+        Transaction transaction = new Transaction(TransactionType.WITHDRAWAL,amount,feeAmount,balance);
+        recordTransaction(transaction);
+
         return amount;
     }
 

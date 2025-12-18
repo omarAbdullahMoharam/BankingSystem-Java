@@ -5,6 +5,10 @@ import com.omar.bank.exception.InvalidAccountException;
 import com.omar.bank.exception.InvalidAmountException;
 import com.omar.bank.util.AccountValidator;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 
 abstract public class Account {
     private static final int ACCOUNT_NUMBER_LENGTH = 16;
@@ -13,7 +17,7 @@ abstract public class Account {
     private final Customer owner;
     private final AccountType accountType;
     protected double balance;
-
+    private List<Transaction> transactions = new ArrayList<>();
     //    validate: only numbers + length 16 + not changeable (Bank code + Branch code + Serial)
     private final String accountNumber;
 
@@ -57,8 +61,11 @@ protected Account(String accountNumber, Customer owner, AccountType accountType)
         {
             throw new InvalidAmountException("Invalid amount");
         }
-        balance = balance + amount;
-//        this.balanceEnquery();
+        balance +=amount;
+        Transaction transaction = new Transaction(TransactionType.DEPOSIT, amount, 0.0, this.balance);
+//        record transaction✅
+        recordTransaction(transaction);
+        //        this.balanceEnquery();
 //        System.out.println();
 
     }
@@ -76,7 +83,15 @@ protected Account(String accountNumber, Customer owner, AccountType accountType)
     public static double getWithdrawFeePercent() {
         return WITHDRAW_FEE_PERCENT;
     }
-
+//  protected method to be used by child classes to record transactions only
+    protected void recordTransaction(Transaction transaction) {
+        this.transactions.add(transaction);
+    }
+//    to return unmodifiable list of transactions cannot be changed from outside child classes
+    public List<Transaction> getTransactions() {
+        return Collections.unmodifiableList(transactions);
+    }
+// TODO: override getTransactions in child classes to add filtering by date/type etc.
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

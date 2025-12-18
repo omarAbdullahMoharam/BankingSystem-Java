@@ -1,7 +1,5 @@
 package com.omar.bank;
-import com.omar.bank.exception.DuplicateAccountException;
-import com.omar.bank.exception.DuplicateNationalIdException;
-import com.omar.bank.exception.InvalidAccountException;
+import com.omar.bank.exception.*;
 import com.omar.bank.model.CurrentAccount;
 import com.omar.bank.model.Customer;
 import com.omar.bank.model.SavingsAccount;
@@ -41,7 +39,7 @@ public class Main {
         }
     }
 
-    private static void printMenu() {
+        private static void printMenu() {
         System.out.println("----------------------------------------");
         System.out.println("         Finance Bank - Main Menu       ");
         System.out.println("----------------------------------------");
@@ -74,13 +72,9 @@ public class Main {
             System.out.println("=========================================");
             System.out.println();
 
-        } catch (DuplicateNationalIdException e) {
-            System.out.println();
-            System.out.println("[Error] " + e.getMessage());
-            System.out.println();
         } catch (Exception e) {
             System.out.println();
-            System.out.println("[Unexpected Error] " + e.getMessage());
+            System.out.println("[Error] " + e.getMessage());
             System.out.println();
         }
     }
@@ -132,7 +126,7 @@ public class Main {
             System.out.println();
         } catch (Exception e) {
             System.out.println();
-            System.out.println("[Unexpected Error] " + e.getMessage());
+            System.out.println("[Error] " + e.getMessage());
             System.out.println();
         }
     }
@@ -171,7 +165,7 @@ public class Main {
             System.out.println();
         } catch (Exception e) {
             System.out.println();
-            System.out.println("[Unexpected Error] " + e.getMessage());
+            System.out.println("[Error] " + e.getMessage());
             System.out.println();
         }
     }

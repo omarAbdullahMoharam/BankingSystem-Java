@@ -26,9 +26,8 @@ public class SavingsAccount extends Account {
         }
 //            implement subtraction here:
             balance -= total;
-            System.out.println("withdrawn : " + customFormatter(amount));
-            System.out.println("Fee : " + customFormatter(feeAmount));
-            System.out.println("Total out: "+customFormatter(amount) + " Will be withdrawn\n");
+            Transaction transaction = new Transaction(TransactionType.WITHDRAWAL,amount,feeAmount,balance);
+            recordTransaction(transaction);
             return amount;
 
     }
