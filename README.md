@@ -1,8 +1,12 @@
-# Banking Employee System—Java OOP
+🏦 Banking Employee System — Java OOP
+A Banking Employee System implemented in Java, designed with clean Object-Oriented Programming (OOP) principles and strong exception handling.
 
-A simple **Banking System** implemented in **Java**, following clean **OOP design principles** and focusing on **robust exception handling**.
+This project simulates a bank back‑office (employee-facing) application, focusing on administrative and teller-assisted operations such as customer onboarding and account management, through a fully interactive CLI (Command Line Interface).
 
-This project simulates a **core banking system for bank employees**, allowing staff to manage customers, validate national IDs, and open savings/current accounts using a fully interactive CLI application.
+⚠️ Note
+This system represents internal bank operations performed by employees.
+Customer self‑service features (e.g. online transfers via mobile banking) are intentionally out of scope.
+
 
 ---
 
