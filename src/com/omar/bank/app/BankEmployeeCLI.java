@@ -1,13 +1,11 @@
 package com.omar.bank.app;
 import com.omar.bank.exception.*;
-import com.omar.bank.model.Account;
-import com.omar.bank.model.CurrentAccount;
-import com.omar.bank.model.Customer;
-import com.omar.bank.model.SavingsAccount;
+import com.omar.bank.model.*;
 import com.omar.bank.service.BankService;
 import com.omar.bank.util.IdGenerator;
 import com.omar.bank.util.NationalIdValidator;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -168,16 +166,20 @@ public class BankEmployeeCLI {
         if (transactions.isEmpty()) {
             System.out.println("No transactions found for this account.");
         } else {
-            for (var t : transactions) {
-                System.out.printf(
-                        "%s | Amount: %.2f | Balance After: %.2f | %s | %s%n",
-                        t.getType(),
-                        t.getAmount(),
-                        t.getBalanceAfter(),
-                        timeFormatter(t.getTimestamp()),
-                        t.getTransactionId()
-                );
-            }
+            System.out.println("(Most recent transactions first)");
+            transactions.stream()
+                    .sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
+                    .forEach(t -> {
+                        System.out.printf(
+                                "%s | Amount: %.2f | Balance After: %.2f | %s | %s%n",
+                                t.getType(),
+                                t.getAmount(),
+                                t.getBalanceAfter(),
+                                timeFormatter(t.getTimestamp()),
+                                t.getTransactionId()
+                        );
+                    });
+
         }
 
         System.out.println("================================");
