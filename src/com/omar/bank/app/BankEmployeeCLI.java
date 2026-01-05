@@ -19,6 +19,17 @@ public class BankEmployeeCLI {
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
 
+        // Menu Options:
+            // 1 - Create Customer
+            // 2 - Add Account
+            // 3 - Show Customers
+            // 4 - Show Accounts By National ID
+            // 5 - Deposit
+            // 6 - Withdraw
+            // 7 - Transaction History
+            // 8 - Exit
+
+
         while (true) {
             printMenu();
             System.out.print("Enter your choice: ");
@@ -28,7 +39,7 @@ public class BankEmployeeCLI {
                 case "1" -> handleCreateCustomer(in);
                 case "2" -> handleAddAccount(in);
                 case "3" -> handleShowCustomers();
-                case "4" -> handleGetAccountsByNationalId(in);
+                case "4" -> handleShowAccountsByNationalId(in);
                 case "5" -> handleDeposit(in);
                 case "6" -> handleWithdraw(in);
                 case "7" -> handleTransactionHistory(in);
@@ -43,154 +54,6 @@ public class BankEmployeeCLI {
                 }
             }
         }
-
-//        SavingsAccount s1 = new SavingsAccount(
-//                "111",
-//                new Customer("A", "29801011234567")
-//        );
-//
-
-//
-//        try {
-//            s1.deposit(3000);
-//        } catch (InvalidAmountException e) {
-//            System.out.println(e.getMessage());
-//        }
-//        try {
-//            c1.deposit(1000);
-//        } catch (InvalidAmountException e) {
-//            System.out.println(e.getMessage());
-//        }
-//
-//        try {
-//            bankService.openAccount(s1);
-//        } catch (DuplicateAccountException e) {
-//            System.out.println(e.getMessage());
-//        }
-//        try {
-//            bankService.openAccount(c1);
-//        } catch (DuplicateAccountException e) {
-//            System.out.println(e.getMessage());
-//        }
-//
-//        bankService.transferFunds(s1.getAccountNumber(), c1.getAccountNumber(), 1000);
-//
-//        System.out.println("=== From Account ===");
-//        s1.getTransactions().forEach(t ->
-//                System.out.println(t.getType() + " | " + t.getBalanceAfter())
-//        );
-//
-//        System.out.println("=== To Account ===");
-//        c1.getTransactions().forEach(t ->
-//                System.out.println(t.getType() + " | " + t.getBalanceAfter())
-//        );
-
-
-//        try {
-//            fb.deposit(1000);
-//            fb.deposit(200);
-//            fb.getTransactions().forEach(t -> {
-//                System.out.println(
-//                        t.getType() + " | " +
-//                                t.getAmount() + " | " +
-//                                t.getBalanceAfter()+
-//                                " | " + timeFormatter(t.getTimestamp())+
-//                                " | " + t.getTransactionId()
-//                );
-//            });
-//        } catch (InvalidAmountException e) {
-//            System.out.println(e.getMessage());
-//        }
-//
-//        SavingsAccount sf = new SavingsAccount(
-//                "1001000100000002",
-//                new Customer("Ahmed Ali","29805231567890")
-//        );
-//
-//        try {
-//            sf.deposit(5000);
-////                sf.getTransactions().forEach(t -> {
-////                    System.out.println(
-////                            t.getType() + " | " + " deposit amount" +
-////                                    t.getAmount() + " | " + " After Balance: "+
-////                                    t.getBalanceAfter()+" Time"+
-////                                    " | " + t.getTimestamp()+" Transaction ID "+
-////                                    " | " + t.getTransactionId()
-////                    );
-////                });
-//        } catch (InvalidAmountException e) {
-//            System.out.println(e.getMessage());
-//        }
-//        try {
-//            sf.withdraw(1000);
-////                System.out.println("withdrawn : " + customFormatter(amount));
-////                System.out.println("Fee : " + customFormatter(feeAmount));
-////                System.out.println("Total out: "+customFormatter(amount) + " Will be withdrawn\n");
-////                sf.getTransactions().forEach(t -> {
-////                    System.out.println(
-////                            t.getType() + " | " + " withdraw amount" +
-////                                    t.getAmount() + " | " + " After Balance: "+
-////                                    t.getBalanceAfter()+ " Time"+
-////                                    " | " + t.getTimestamp()+ " Transaction ID "+
-////                                    " | " + t.getTransactionId()
-////                    );
-////                });
-//        } catch (InvalidAmountException | InsufficientAmountException e) {
-//            System.out.println(e.getMessage());
-//
-//        }
-//        System.out.println("Transactions for Savings Account:");
-//        sf.getTransactions().forEach(t -> {
-//            System.out.println(
-//                    t.getType() + " | " +
-//                            t.getAmount() + " | " + " After Balance: "+
-//                            t.getBalanceAfter()+ " Time"+
-//                            " | " +timeFormatter( t.getTimestamp())+ " Transaction ID "+
-//                            " | " + t.getTransactionId()
-//            );
-//        });
-//        CurrentAccount ca = new CurrentAccount(
-//                "1001000100000003",
-//                new Customer("Omar Test", "30001011234567"),
-//                500
-//        );
-//
-//        try {
-//            ca.deposit(1000);     // balance = 1000
-//        } catch (InvalidAmountException e) {
-//            System.out.println(e.getMessage());
-//        }
-//        try {
-//            ca.withdraw(1200);    // balance = -200 (OK)
-//        } catch (InvalidAmountException|InsufficientAmountException e) {
-//            System.out.println(e.getMessage());
-//        }
-//        try {
-//            ca.withdraw(200);     // balance = -400 (OK)
-//        }catch (InvalidAmountException|InsufficientAmountException e) {
-//            System.out.println(e.getMessage());
-//        }
-//
-//        try {
-//            ca.withdraw(200); // would be -600 ❌
-//        } catch (InsufficientAmountException | InvalidAmountException e) {
-//            System.out.println(e.getMessage());
-//        }
-//        System.out.println("Transactions for Current Account:");
-//        ca.getTransactions().forEach(t -> {
-//            System.out.println(
-//                    t.getType() + " | " +
-//                            t.getAmount() + " | " + " After Balance: "+
-//                            t.getBalanceAfter()+ " Time"+
-//                            " | " + timeFormatter(t.getTimestamp())+ " Transaction ID "+
-//                            " | " + t.getTransactionId()
-//            );
-//        });
-//
-//        bankService.transferFunds(sf.getAccountNumber(),ca.getAccountNumber(),300);
-//        System.out.println("After Transfer:");
-//        System.out.println("Savings Account Balance: " + sf.getBalance());
-//        System.out.println("Current Account Balance: " + ca.getBalance());
 }
 
 // will be in the user ATM interface not in the bank service
@@ -527,7 +390,7 @@ public class BankEmployeeCLI {
         System.out.println();
     }
 
-    private static void handleGetAccountsByNationalId(Scanner in) {
+    private static void handleShowAccountsByNationalId(Scanner in) {
         System.out.println();
         System.out.print("Enter Customer National ID to retrieve accounts: ");
         String nationalId = in.nextLine().trim();
