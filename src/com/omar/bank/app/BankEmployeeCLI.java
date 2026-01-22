@@ -67,15 +67,24 @@ public class BankEmployeeCLI {
     }
 
     private static BigDecimal readBigDecimal(Scanner in, String prompt) {
-        System.out.print(prompt);
-        String input = in.nextLine().trim();
-        try {
-            return new BigDecimal(input);
-        } catch (NumberFormatException e) {
-            System.out.println("[!] Invalid amount format.");
-            return null;
+        while (true) {
+            System.out.print(prompt);
+            String input = in.nextLine().trim();
+
+            // optional escape
+            if (input.equalsIgnoreCase("q")) {
+                System.out.println("[!] Operation cancelled.");
+                return null;
+            }
+
+            try {
+                return new BigDecimal(input);
+            } catch (NumberFormatException e) {
+                System.out.println("[!] Invalid amount format. Please enter a valid number.");
+            }
         }
     }
+
 
     private static Account chooseAccountFromCustomer(Scanner in, Customer customer) {
         var accounts = customer.getAccounts();
