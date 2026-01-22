@@ -6,6 +6,7 @@ import com.omar.bank.model.Customer;
 import com.omar.bank.util.IdGenerator;
 import com.omar.bank.util.NationalIdValidator;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -110,7 +111,7 @@ public Customer createCustomer(String name, String nationalId)
         return null;
     }
 
-    public void transferFunds(String fromAccount,String toAccount,double amount)
+    public void transferFunds(String fromAccount, String toAccount, BigDecimal amount)
      throws InvalidAccountException, InvalidNationalIdException {
         if (fromAccount == null) {
             throw new InvalidAccountException("From account cannot be null");

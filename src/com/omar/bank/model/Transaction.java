@@ -2,6 +2,7 @@ package com.omar.bank.model;
 
 import com.omar.bank.util.IdGenerator;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 /**
  * Represents a financial record of an account operation
@@ -14,20 +15,20 @@ import java.time.Instant;
 public class Transaction {
     private final String transactionId;
     private final TransactionType type;
-    private final double amount;
-    private final double fee;
-    private final double total;
+    private final BigDecimal amount;
+    private final BigDecimal fee;
+    private final BigDecimal total;
     private final Instant timestamp;
-    private final double balanceAfter;
+    private final BigDecimal balanceAfter;
 
 
 
-    public  Transaction( TransactionType type, double amount, double fee, double balanceAfter) {
+    public  Transaction( TransactionType type, BigDecimal amount, BigDecimal fee, BigDecimal balanceAfter) {
         this.transactionId = IdGenerator.generateTransactionId();
         this.type = type;
         this.amount = amount;
         this.fee= fee;
-        this.total = amount + fee;
+        this.total = amount.add(fee);
         this.balanceAfter = balanceAfter;
         this.timestamp = Instant.now();
     }
@@ -37,19 +38,19 @@ public class Transaction {
     public String getType() {
         return type.toString();
     }
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
-    public double getFee() {
+    public BigDecimal getFee() {
         return fee;
     }
-    public double getTotal() {
+    public BigDecimal getTotal() {
         return total;
     }
     public Instant getTimestamp() {
         return timestamp;
     }
-    public double getBalanceAfter() {
+    public BigDecimal getBalanceAfter() {
         return balanceAfter;
     }
 }

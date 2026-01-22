@@ -4,6 +4,8 @@ import com.omar.bank.exception.InsufficientAmountException;
 import com.omar.bank.exception.InvalidAccountException;
 import com.omar.bank.exception.InvalidAmountException;
 
+import java.math.BigDecimal;
+
 public class SavingsAccount extends Account {
 
     public SavingsAccount(String accountNumber, Customer owner) throws InvalidAccountException {
@@ -11,19 +13,19 @@ public class SavingsAccount extends Account {
     }
 
     @Override
-    public void withdraw(double amount) throws InsufficientAmountException, InvalidAmountException {
+    public void withdraw(BigDecimal amount) throws InsufficientAmountException, InvalidAmountException {
 
-        if (amount<=0) // negative or zero amount logically is not accepted
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) // negative or zero amount logically is not accepted
         {
             throw new InvalidAmountException("Amount must be greater than 0");
         }
-        double feeAmount = amount * Account.getWithdrawFeePercent();
-        double total = amount+feeAmount;
-        if (total>balance) { // the total must be less than balance
+        BigDecimal feeAmount =amount.multiply(Account.getWithdrawFeePercent());
+        BigDecimal total = amount.add(feeAmount);
+        if (balance.compareTo(total) < 0) { // the total must be less than balance
             throw new InsufficientAmountException("Insufficient funds");
         }
 //            implement subtraction here:
-            balance -= total;
+            balance = balance.subtract(total);
             Transaction transaction = new Transaction(TransactionType.WITHDRAWAL,amount,feeAmount,balance);
             recordTransaction(transaction);
 

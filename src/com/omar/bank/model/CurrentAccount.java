@@ -4,34 +4,37 @@ import com.omar.bank.exception.InsufficientAmountException;
 import com.omar.bank.exception.InvalidAccountException;
 import com.omar.bank.exception.InvalidAmountException;
 
+import java.math.BigDecimal;
+
 public class CurrentAccount extends Account{
 
-    private double overdraftLimit;
+    private BigDecimal overdraftLimit;
 
-    public CurrentAccount(String accountNumber, Customer owner, double overdraftLimit) throws InvalidAccountException {
+    public CurrentAccount(String accountNumber, Customer owner, BigDecimal overdraftLimit) throws InvalidAccountException {
         super(accountNumber, owner, AccountType.CURRENT);
         this.overdraftLimit = overdraftLimit;
     }
 
-    public double getOverdraftLimit() {
+    public BigDecimal getOverdraftLimit() {
         return overdraftLimit;
     }
 
-    public void setOverdraftLimit(double overdraftLimit) {
+    public void setOverdraftLimit(BigDecimal overdraftLimit) {
         this.overdraftLimit = overdraftLimit;
     }
 
     @Override
-    public void withdraw(double amount) throws InvalidAmountException, InsufficientAmountException {
-        if (amount<=0){
+    public void withdraw(BigDecimal amount) throws InvalidAmountException, InsufficientAmountException {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
             throw new InvalidAmountException("Amount must be greater than 0");
         }
 
-        double feeAmount = amount * Account.getWithdrawFeePercent();
-        double total = amount+feeAmount;
-        double validatedBalance = balance-total;
+        BigDecimal feeAmount = amount.multiply(Account.getWithdrawFeePercent()) ;
+        BigDecimal total = amount.add(feeAmount);
+        BigDecimal validatedBalance = balance.subtract(total);
 
-        if (validatedBalance < -overdraftLimit) {
+
+        if (validatedBalance .compareTo( overdraftLimit.multiply(BigDecimal.valueOf(-1))) < 0) {
             throw new InsufficientAmountException("Overdraft limit exceeded");
         }
         balance = validatedBalance;

@@ -5,6 +5,7 @@ import com.omar.bank.exception.InvalidAccountException;
 import com.omar.bank.exception.InvalidAmountException;
 import com.omar.bank.util.AccountValidator;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,11 +13,11 @@ import java.util.List;
 
 abstract public class Account {
     private static final int ACCOUNT_NUMBER_LENGTH = 16;
-    private static final double WITHDRAW_FEE_PERCENT =0.01 ;
+    private static final BigDecimal WITHDRAW_FEE_PERCENT = BigDecimal.valueOf(0.01); // 0.01%;
 
     private final Customer owner;
     private final AccountType accountType;
-    protected double balance;
+    protected BigDecimal balance;
     private final List<Transaction> transactions = new ArrayList<>();
     //    validate: only numbers + length 16 + not changeable (Bank code + Branch code + Serial)
     private final String accountNumber;
@@ -33,7 +34,7 @@ protected Account(String accountNumber, Customer owner, AccountType accountType)
 
     this.accountNumber = accountNumber;
     this.owner = owner;
-    this.balance = 0;
+    this.balance = BigDecimal.ZERO;
 }
 
     public String getAccountNumber() {
@@ -41,11 +42,11 @@ protected Account(String accountNumber, Customer owner, AccountType accountType)
     }
     public AccountType getAccountType() { return accountType; }
 
-    public double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-//    public void setBalance(double balance) {
+//    public void setBalance(BigDecimal balance) {
 //        this.balance = balance;
 //    }
 
@@ -56,13 +57,14 @@ protected Account(String accountNumber, Customer owner, AccountType accountType)
 //    public void setOwner(Customer owner) {
 //        this.owner = owner;
 //    }
-    public void deposit(double amount) throws InvalidAmountException {
-        if (amount<=0)
+    public void deposit(BigDecimal amount) throws InvalidAmountException {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0)
         {
             throw new InvalidAmountException("Invalid amount");
         }
-        balance +=amount;
-        Transaction transaction = new Transaction(TransactionType.DEPOSIT, amount, 0.0, this.balance);
+        balance = balance.add(amount);
+
+        Transaction transaction = new Transaction(TransactionType.DEPOSIT, amount,new BigDecimal("0.0"), this.balance);
 //        record transaction✅
         recordTransaction(transaction);
         //        this.balanceEnquery();
@@ -70,7 +72,7 @@ protected Account(String accountNumber, Customer owner, AccountType accountType)
 
     }
 
-    public abstract void withdraw(double amount) throws InvalidAmountException, InsufficientAmountException;
+    public abstract void withdraw(BigDecimal amount) throws InvalidAmountException, InsufficientAmountException;
     // helper for printing
     public String getTypeName() { return accountType.label(); }
 
@@ -80,7 +82,7 @@ protected Account(String accountNumber, Customer owner, AccountType accountType)
         return ACCOUNT_NUMBER_LENGTH;
     }
 
-    public static double getWithdrawFeePercent() {
+    public static BigDecimal getWithdrawFeePercent() {
         return WITHDRAW_FEE_PERCENT;
     }
 //  protected method to be used by child classes to record transactions only
