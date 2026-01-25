@@ -76,9 +76,6 @@ public abstract class Person {
         this.phoneNumber = phoneNumber;
     }
 
-    // Disallowed setters (removed)
-    // public void setSystemId(...)
-    // public void setNationalId(...)
 
     // helpers
     private void validateName(String name) {
