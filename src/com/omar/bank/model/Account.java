@@ -46,17 +46,10 @@ protected Account(String accountNumber, Customer owner, AccountType accountType)
         return balance;
     }
 
-//    public void setBalance(BigDecimal balance) {
-//        this.balance = balance;
-//    }
-
     public Customer getOwner() {
         return owner;
     }
 
-//    public void setOwner(Customer owner) {
-//        this.owner = owner;
-//    }
     public void deposit(BigDecimal amount) throws InvalidAmountException {
         if (amount.compareTo(BigDecimal.ZERO) <= 0)
         {
@@ -67,9 +60,6 @@ protected Account(String accountNumber, Customer owner, AccountType accountType)
         Transaction transaction = new Transaction(TransactionType.DEPOSIT, amount,new BigDecimal("0.0"), this.balance);
 //        record transaction✅
         recordTransaction(transaction);
-        //        this.balanceEnquery();
-//        System.out.println();
-
     }
 
     public abstract void withdraw(BigDecimal amount) throws InvalidAmountException, InsufficientAmountException;
