@@ -7,17 +7,16 @@ import com.omar.bank.util.IdGenerator;
 import com.omar.bank.util.NationalIdValidator;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.omar.bank.util.AccountValidator.validateAccountNumber;
 
 
 public class BankService {
     private final Map<String, Customer> customersByNationalId = new HashMap<>();
-    private final List<Account> accounts = new ArrayList<>();
+//    private final List<Account> accounts = new ArrayList<>();
+    private Map<String, Account> accountsByNumber = new HashMap<>();
+
 
     private BankService() {
 
@@ -47,8 +46,6 @@ public Customer createCustomer(String name, String nationalId)
 
     String systemId = IdGenerator.generateCustomerId();
     Customer customer = new Customer(systemId, name, nationalId);
-
-//    System.out.println(customer.getSystemId());
     customersByNationalId.put(nationalId, customer);
     return customer;
 }
@@ -71,11 +68,15 @@ public Customer createCustomer(String name, String nationalId)
         validateAccountNumber(accNum);
 
         // check duplicate
-        boolean accountExists = accounts.stream()
-                .anyMatch(a -> accNum.equals(a.getAccountNumber()));
-
-        if (accountExists) {
-            throw new DuplicateAccountException("Account with this account number already exists");
+        /*
+        * “I refactored account storage from a List to a Map keyed
+        * by account number to ensure constant‑time lookups
+        * and enforce uniqueness at the data‑structure level.”
+         */
+        if (accountsByNumber.containsKey(accNum)) {
+            throw new DuplicateAccountException(
+                    "Account with this account number already exists"
+            );
         }
 
         Customer owner = account.getOwner();
@@ -83,13 +84,15 @@ public Customer createCustomer(String name, String nationalId)
             throw new IllegalArgumentException("Account owner cannot be null");
         }
 
-        // ensure owner is registered customer
+        // ensure owner is registered as a customer
         if (!customersByNationalId.containsKey(owner.getNationalId())) {
-            throw new IllegalArgumentException("Account owner is not registered as a customer");
+            throw new IllegalArgumentException(
+                    "Account owner is not registered as a customer"
+            );
         }
 
         // persist
-        accounts.add(account);
+        accountsByNumber.put(accNum, account);
         owner.addAccount(account);
     }
 
@@ -103,14 +106,12 @@ public Customer createCustomer(String name, String nationalId)
         } catch (InvalidAccountException e) {
             throw new RuntimeException(e);
         }
-        for (Account account : accounts) {
-            if (account.getAccountNumber().equals(accountNumber)) {
-                return account;
-            }
+        if (accountsByNumber.containsKey(accountNumber)) {
+            return accountsByNumber.get(accountNumber);
         }
         return null;
     }
-
+//  TODO: transfer funds method --> withdraw from one account and deposit to another
     public void transferFunds(String fromAccount, String toAccount, BigDecimal amount)
      throws InvalidAccountException, InvalidNationalIdException {
         if (fromAccount == null) {
@@ -132,17 +133,20 @@ public Customer createCustomer(String name, String nationalId)
             throw new RuntimeException(e);
         }
 
-
     }
+
+            //    Defensive Copy Pattern
+            //    I return unmodifiable views from the service layer
+            //    to protect internal state and enforce encapsulation.
 
     public List<Customer> getCustomers() {
-        return new ArrayList<>(customersByNationalId.values());
+        return Collections.unmodifiableList(
+                new ArrayList<>(customersByNationalId.values())
+        );
     }
-
 
     public List<Account> getAccounts() {
-        return accounts;
+        return Collections.unmodifiableList(new ArrayList<>(accountsByNumber.values()));
     }
-
 
 }

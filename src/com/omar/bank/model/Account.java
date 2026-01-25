@@ -108,5 +108,4 @@ protected Account(String accountNumber, Customer owner, AccountType accountType)
                 '}';
     }
 
-
 }
