@@ -15,7 +15,7 @@ import static com.omar.bank.util.AccountValidator.validateAccountNumber;
 public class BankService {
     private final Map<String, Customer> customersByNationalId = new HashMap<>();
 //    private final List<Account> accounts = new ArrayList<>();
-    private Map<String, Account> accountsByNumber = new HashMap<>();
+    private final Map<String, Account> accountsByNumber = new HashMap<>();
 
 
     private BankService() {
@@ -138,15 +138,23 @@ public Customer createCustomer(String name, String nationalId)
             //    Defensive Copy Pattern
             //    I return unmodifiable views from the service layer
             //    to protect internal state and enforce encapsulation.
-
-    public List<Customer> getCustomers() {
-        return Collections.unmodifiableList(
-                new ArrayList<>(customersByNationalId.values())
-        );
-    }
-
-    public List<Account> getAccounts() {
-        return Collections.unmodifiableList(new ArrayList<>(accountsByNumber.values()));
-    }
+    /*****  not logically needed but just to practice on Collections usability****/
+        public List<Customer> getCustomers() {
+            return Collections.unmodifiableList(
+                    new ArrayList<>(customersByNationalId.values())
+            );
+        }
+    //    not needed but just to practice on Collections usability
+        public List<Account> getAccounts() {
+            return Collections.unmodifiableList(new ArrayList<>(accountsByNumber.values()));
+        }
+    //    not needed but just to show mapping usability
+        public Map<Customer, List<Account>> getCustomerAccountsMap() {
+            Map<Customer, List<Account>> customerAccountsMap = new HashMap<>();
+            for (Customer customer : customersByNationalId.values()) {
+                customerAccountsMap.put(customer, customer.getAccounts());
+            }
+            return Collections.unmodifiableMap(customerAccountsMap);
+        }
 
 }

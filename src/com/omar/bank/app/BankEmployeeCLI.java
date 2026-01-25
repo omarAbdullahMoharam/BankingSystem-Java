@@ -87,30 +87,49 @@ public class BankEmployeeCLI {
 
 
     private static Account chooseAccountFromCustomer(Scanner in, Customer customer) {
+
         var accounts = customer.getAccounts();
+
         if (accounts.isEmpty()) {
             System.out.println("[!] Customer has no accounts.");
             return null;
         }
 
+        // if customer has only one account → auto select it
+        if (accounts.size() == 1) {
+            System.out.println(
+                            accounts.getFirst().getAccountType().label()+ " Account, auto-selected."
+            );
+            return accounts.getFirst();
+        }
+
+        // multiple accounts → ask user to choose
         System.out.println("\nCustomer Accounts:");
         for (int i = 0; i < accounts.size(); i++) {
-            System.out.printf("%d) %s%n", i + 1, accounts.get(i).getAccountType().label());
+            System.out.printf(
+                    "%d) %s%n",
+                    i + 1,
+                    accounts.get(i).getAccountType().label()
+            );
         }
 
         System.out.print("Choose account number: ");
         try {
             int choice = Integer.parseInt(in.nextLine());
+
             if (choice < 1 || choice > accounts.size()) {
                 System.out.println("[!] Invalid selection.");
                 return null;
             }
+
             return accounts.get(choice - 1);
+
         } catch (NumberFormatException e) {
             System.out.println("[!] Invalid input.");
             return null;
         }
     }
+
 
     /* ========================= Menu ========================= */
 
@@ -154,14 +173,8 @@ public class BankEmployeeCLI {
         System.out.print("\nEnter Account Type (1 for Savings, 2 for Current): ");
         String accountType = in.nextLine().trim();
 
-        String nationalId = readAndValidateNationalId(in);
-        if (nationalId == null) return;
-
-        Customer customer = bankService.findCustomerByNationalId(nationalId);
-        if (customer == null) {
-            System.out.println("[!] Customer not found.");
-            return;
-        }
+        Customer customer = readAndValidateCustomer(in);
+        if (customer == null) return;
 
         String accountNumber = IdGenerator.generateAccountNumber();
         System.out.println("Generated Account Number : " + accountNumber);
@@ -188,15 +201,8 @@ public class BankEmployeeCLI {
     }
 
     private static void handleDeposit(Scanner in) {
-        String nationalId = readAndValidateNationalId(in);
-        if (nationalId == null) return;
-
-        Customer customer = bankService.findCustomerByNationalId(nationalId);
-        if (customer == null) {
-            System.out.println("[!] Customer not found.");
-            return;
-        }
-
+        Customer customer = readAndValidateCustomer(in);
+        if (customer == null) return;
         Account account = chooseAccountFromCustomer(in, customer);
         if (account == null) return;
 
@@ -213,16 +219,9 @@ public class BankEmployeeCLI {
     }
 
     private static void handleWithdraw(Scanner in) {
-        String nationalId = readAndValidateNationalId(in);
-        if (nationalId == null) return;
-
-        Customer customer = bankService.findCustomerByNationalId(nationalId);
-        if (customer == null) {
-            System.out.println("[!] Customer not found.");
-            return;
-        }
-
-        Account account = chooseAccountFromCustomer(in, customer);
+        Customer customer = readAndValidateCustomer(in);
+        if (customer == null)return;
+     Account account = chooseAccountFromCustomer(in, customer);
         if (account == null) return;
 
         BigDecimal amount = readBigDecimal(in, "Enter withdrawal amount: ");
@@ -238,14 +237,8 @@ public class BankEmployeeCLI {
     }
 
     private static void handleTransactionHistory(Scanner in) {
-        String nationalId = readAndValidateNationalId(in);
-        if (nationalId == null) return;
-
-        Customer customer = bankService.findCustomerByNationalId(nationalId);
-        if (customer == null) {
-            System.out.println("[!] Customer not found.");
-            return;
-        }
+        Customer customer = readAndValidateCustomer(in);
+        if (customer == null) return;
 
         Account account = chooseAccountFromCustomer(in, customer);
         if (account == null) return;
@@ -267,6 +260,18 @@ public class BankEmployeeCLI {
 
         System.out.println("================================");
     }
+    private static Customer readAndValidateCustomer(Scanner in) {
+        String nationalId = readAndValidateNationalId(in);
+        if (nationalId == null) return null;
+
+        Customer customer = bankService.findCustomerByNationalId(nationalId);
+        if (customer == null) {
+            System.out.println("[!] Customer not found.");
+            return null;
+        }
+
+        return customer;
+    }
 
     private static void handleShowCustomers() {
         List<Customer> customers = bankService.getCustomers();
@@ -284,19 +289,23 @@ public class BankEmployeeCLI {
     }
 
     private static void handleShowAccountsByNationalId(Scanner in) {
-        String nationalId = readAndValidateNationalId(in);
-        if (nationalId == null) return;
-
-        Customer customer = bankService.findCustomerByNationalId(nationalId);
-        if (customer == null) {
-            System.out.println("[!] Customer not found.");
+    Customer customer = readAndValidateCustomer(in);
+    if (customer == null) {
+        return;
+    }
+        System.out.printf("\nCustomer: %s%n", customer.getName());
+        List<Account> customerAccounts = customer.getAccounts();
+        if (customerAccounts.isEmpty()) {
+            System.out.println("[!] No accounts found for this customer.");
             return;
         }
-
-        System.out.printf("\nCustomer: %s%n", customer.getName());
-        customer.getAccounts().forEach(a ->
+        System.out.println("Accounts:");
+        customerAccounts.forEach(a ->
                 System.out.printf("- %s | %s%n",
-                        a.getAccountNumber(), a.getAccountType().label()));
+                        a.getAccountNumber(),
+                        a.getAccountType().label())
+        );
+
     }
 
     private static void handleExit() {
