@@ -13,6 +13,7 @@ This project simulates a **bank back-office system for employees**, allowing sta
 ## 📂 Project Structure
 
 ```
+exports/
 src/
 └── com/omar/bank/
     ├── app/
@@ -44,6 +45,7 @@ src/
         ├── IdGenerator.java
         ├── NationalIdValidator.java
         └── NumberFormatter.java
+        └── TransactionPrinter.java
 ```
 
 ---
@@ -73,6 +75,14 @@ src/
 
 - **Show Transaction History**
     - Read-only audit log per account
+    - Includes timestamps and balances
+    - Unique transaction IDs
+    - Formatted output for clarity
+-  **Export Transaction History to File**
+    - Saves transaction history to a text file
+    - Includes all transaction details
+    - File named with account number and timestamp
+-  **Exit Application**
 
 ---
 
@@ -80,7 +90,7 @@ src/
 
 Implemented via `NationalIdValidator`, including:
 - Format validation (14 digits)
-- Birth date validation
+- Birthdate validation
 - Governorate code validation
 
 ---
@@ -111,6 +121,19 @@ Transactions are:
 - Used for auditing and account history
 - Fully valid in an employee banking system
 
+---
+
+## Transaction History Export
+
+The system allows bank employees to export
+account transaction history to an Excel‑compatible CSV file.
+
+- Export is available directly from the CLI
+- Generated files can be opened using Microsoft Excel
+- No external libraries are required
+
+This feature simulates real-world audit and reporting operations
+commonly found in core banking back-office systems.
 ---
 
 ## ❗ Custom Exceptions

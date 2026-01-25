@@ -5,6 +5,7 @@ import com.omar.bank.model.*;
 import com.omar.bank.service.BankService;
 import com.omar.bank.util.IdGenerator;
 import com.omar.bank.util.NationalIdValidator;
+import com.omar.bank.util.TransactionPrinter;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -33,7 +34,8 @@ public class BankEmployeeCLI {
             // 5 - Deposit
             // 6 - Withdraw
             // 7 - Transaction History
-            // 8 - Exit
+            // 8 - Export Transaction History to Excel (CSV)
+            // 9 - Exit
 
             switch (choice) {
                 case "1" -> handleCreateCustomer(in);
@@ -43,7 +45,8 @@ public class BankEmployeeCLI {
                 case "5" -> handleDeposit(in);
                 case "6" -> handleWithdraw(in);
                 case "7" -> handleTransactionHistory(in);
-                case "8" -> {
+                case "8" -> handleExportTransactions(in);
+                case "9" -> {
                     handleExit();
                     return;
                 }
@@ -144,7 +147,8 @@ public class BankEmployeeCLI {
         System.out.println("5. Deposit");
         System.out.println("6. Withdraw");
         System.out.println("7. Show Transaction History");
-        System.out.println("8. Exit");
+        System.out.println("8. Export Transaction History to Excel (CSV)");
+        System.out.println("9. Exit");
         System.out.println("----------------------------------------");
     }
 
@@ -260,6 +264,25 @@ public class BankEmployeeCLI {
 
         System.out.println("================================");
     }
+    private static void handleExportTransactions(Scanner in) {
+
+        Customer customer = readAndValidateCustomer(in);
+        if (customer == null) return;
+
+        Account account = chooseAccountFromCustomer(in, customer);
+        if (account == null) return;
+
+        if (account.getTransactions().isEmpty()) {
+            System.out.println("[!] No transactions to export.");
+            return;
+        }
+
+        String fileName =
+                "exports/transactions_" + account.getAccountNumber() + ".csv";
+
+        TransactionPrinter.exportToCsv(account, fileName);
+    }
+
     private static Customer readAndValidateCustomer(Scanner in) {
         String nationalId = readAndValidateNationalId(in);
         if (nationalId == null) return null;
