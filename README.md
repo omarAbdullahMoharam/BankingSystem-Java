@@ -82,6 +82,11 @@ src/
     - Saves transaction history to a text file
     - Includes all transaction details
     - File named with account number and timestamp
+-  **Masked Account Numbers**
+    - Account numbers are never fully displayed
+    - Only the last 4 digits are visible (e.g. `XXXXXXXXXXXX3456`)
+    - Improves security and follows common banking standards
+
 -  **Exit Application**
 
 ---
@@ -123,19 +128,29 @@ Transactions are:
 
 ---
 
-## Transaction History Export
-
+## 📤 Transaction History Export (CSV)
 The system allows bank employees to export
 account transaction history to an Excel‑compatible CSV file.
 
-- Export is available directly from the CLI
-- Generated files can be opened using Microsoft Excel
+### Key Characteristics:
+- Export is performed **per account** (not per customer)
+- Files are generated using the account number
+- Existing files are **not overwritten**
+- Only **new transactions** are appended on each export
+- Prevents duplicate transaction records
+- Generated files can be opened directly using Microsoft Excel
 - No external libraries are required
 
-This feature simulates real-world audit and reporting operations
+This feature simulates real-world **audit and reporting workflows**
 commonly found in core banking back-office systems.
----
 
+---
+## 🔒 Security & Data Protection
+- Sensitive data such as account numbers are masked at display time
+- Only the last four digits of an account number are shown
+- Internal collections are exposed as read-only views
+- Transaction history is immutable and cannot be modified externally
+----
 ## ❗ Custom Exceptions
 
 | Exception | Purpose |
@@ -162,6 +177,15 @@ The system emphasizes:
 - Domain-driven design
 - Clean error handling
 
+---
+
+## 🧩 Design Decisions
+- Transaction exports are designed **per account** to align with
+  real-world banking audit and statement practices
+- CSV format was chosen to ensure Excel compatibility
+  without introducing external dependencies
+- Incremental export logic prevents duplicate transaction records
+  and avoids overwriting existing files
 ---
 
 ## 🚀 How to Run
@@ -207,6 +231,10 @@ The employee selects accounts using National ID, not raw account numbers, ensuri
 - Singleton Pattern
 - Clean Architecture
 - Banking Domain Modeling
+- Defensive Copying & Unmodifiable Collections
+- Data Masking & Privacy‑Aware Output
+- Incremental File Export (Append‑Only CSV)
+
 
 ---
 
