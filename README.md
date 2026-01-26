@@ -78,7 +78,7 @@ src/
     - Includes timestamps and balances
     - Unique transaction IDs
     - Formatted output for clarity
--  **Export Transaction History to File**
+- **Export Transaction History to File (CSV)**
     - Saves transaction history to a text file
     - Includes all transaction details
     - File named with account number and timestamp
@@ -150,7 +150,7 @@ commonly found in core banking back-office systems.
 - Only the last four digits of an account number are shown
 - Internal collections are exposed as read-only views
 - Transaction history is immutable and cannot be modified externally
-----
+---
 ## ❗ Custom Exceptions
 
 | Exception | Purpose |
@@ -259,5 +259,7 @@ GitHub: [omarAbdullahMoharam](https://github.com/omarAbdullahMoharam)
 ---
 
 ## 📄 License
-
 This project is open source and available for educational purposes.
+
+> This project emphasizes real-world banking logic,
+> clean design decisions, and production-like back-office workflows.
