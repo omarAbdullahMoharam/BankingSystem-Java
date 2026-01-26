@@ -6,6 +6,10 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 public class NumberFormatter {
+    //  disable instantiation of utility class or objects
+    private NumberFormatter() {
+        // prevent instantiation
+    }
     private static final DateTimeFormatter TRANSACTION_FORMATTER =
             DateTimeFormatter.ofPattern("dd MMM yyyy - hh:mm a")
                     .withZone(ZoneId.systemDefault());
@@ -23,5 +27,22 @@ public class NumberFormatter {
     public static String timeFormatter(Instant dateTime) {
         if (dateTime == null) return "N/A";
         return TRANSACTION_FORMATTER.format(dateTime);
+    }
+    /**
+     * Masks an account number, leaving only the last N characters visible.
+     * Example: 1234567890123456 -> XXXXXXXXXXXXX456
+     */
+    public static String mask(String accountNumber, int visibleChars) {
+
+        if (accountNumber == null) {
+            return "";
+        }
+
+        if (accountNumber.length() <= visibleChars) {
+            return accountNumber;
+        }
+
+        return "X".repeat(accountNumber.length() - visibleChars)
+                + accountNumber.substring(accountNumber.length() - visibleChars);
     }
 }

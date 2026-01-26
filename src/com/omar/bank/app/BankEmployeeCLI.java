@@ -5,6 +5,7 @@ import com.omar.bank.model.*;
 import com.omar.bank.service.BankService;
 import com.omar.bank.util.IdGenerator;
 import com.omar.bank.util.NationalIdValidator;
+import com.omar.bank.util.NumberFormatter;
 import com.omar.bank.util.TransactionPrinter;
 
 import java.math.BigDecimal;
@@ -106,15 +107,20 @@ public class BankEmployeeCLI {
             return accounts.getFirst();
         }
 
+
         // multiple accounts → ask user to choose
         System.out.println("\nCustomer Accounts:");
+
         for (int i = 0; i < accounts.size(); i++) {
+
             System.out.printf(
-                    "%d) %s%n",
+                    "%d) %s | Account Number: %s%n",
                     i + 1,
-                    accounts.get(i).getAccountType().label()
+                    accounts.get(i).getAccountType().label(),
+                    NumberFormatter.mask(accounts.get(i).getAccountNumber(), 4)
             );
         }
+
 
         System.out.print("Choose account number: ");
         try {
@@ -173,6 +179,10 @@ public class BankEmployeeCLI {
         }
     }
 
+    // Note:
+    // Customers are allowed to have multiple accounts of the same type.
+    // This reflects real-world banking scenarios and keeps the system flexible.
+
     private static void handleAddAccount(Scanner in) {
         System.out.print("\nEnter Account Type (1 for Savings, 2 for Current): ");
         String accountType = in.nextLine().trim();
@@ -181,7 +191,7 @@ public class BankEmployeeCLI {
         if (customer == null) return;
 
         String accountNumber = IdGenerator.generateAccountNumber();
-        System.out.println("Generated Account Number : " + accountNumber);
+        System.out.println("Generated Account Number : " + NumberFormatter.mask(accountNumber, 4));
 
         try {
             switch (accountType) {
@@ -323,7 +333,7 @@ public class BankEmployeeCLI {
         System.out.println("Accounts:");
         customerAccounts.forEach(a ->
                 System.out.printf("- %s | %s%n",
-                        a.getAccountNumber(),
+                       NumberFormatter.mask( a.getAccountNumber(), 4),
                         a.getAccountType().label())
         );
 
