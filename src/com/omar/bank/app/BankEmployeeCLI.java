@@ -277,11 +277,9 @@ public class BankEmployeeCLI {
             return;
         }
 
-        String fileName =
-                "exports/transactions_" + account.getAccountNumber() + ".csv";
-
-        TransactionPrinter.exportToCsv(account, fileName);
+        TransactionPrinter.exportNewTransactions(account);
     }
+
 
     private static Customer readAndValidateCustomer(Scanner in) {
         String nationalId = readAndValidateNationalId(in);
